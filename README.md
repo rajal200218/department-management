@@ -11,11 +11,43 @@ A high-performance, enterprise-grade academic administration platform engineered
 
 ---
 
-## 📑 Quick Links
-- **Master User & System Manual (Markdown):** [USER_GUIDE.md](USER_GUIDE.md)
-- **Printable / Interactive Manual (HTML):** [USER_GUIDE.html](USER_GUIDE.html)
-- **Database Schema Definition:** [database/schema.sql](database/schema.sql)
-- **Initial Seed Dataset:** [database/seed.sql](database/seed.sql)
+## 📑 Quick Links & Documentation
+- 🌐 **Live Web Application (Vercel):** [https://department-management-nsts7zbfi-rajal1.vercel.app](https://department-management-nsts7zbfi-rajal1.vercel.app)
+- ⚙️ **Live Backend API (Render):** [https://nuv-department-api.onrender.com/api/health](https://nuv-department-api.onrender.com/api/health)
+- 🗄️ **Live Cloud Database (Neon):** Managed Serverless PostgreSQL 16
+- ☁️ **Live Server Architecture Guide:** [LIVE_SERVER_ARCHITECTURE.md](LIVE_SERVER_ARCHITECTURE.md) | [LIVE_SERVER_ARCHITECTURE.html](LIVE_SERVER_ARCHITECTURE.html)
+- 📘 **New User Guide & System Manual:** [NEW_USER_GUIDE.md](NEW_USER_GUIDE.md) | [NEW_USER_GUIDE.html](NEW_USER_GUIDE.html)
+- 📖 **Comprehensive Architecture Manual:** [USER_GUIDE.md](USER_GUIDE.md) | [USER_GUIDE.html](USER_GUIDE.html)
+- 🏛️ **Database Schema & Seeds:** [database/schema.sql](database/schema.sql) | [database/seed.sql](database/seed.sql)
+
+
+---
+
+## ☁️ Live Cloud Server Architecture
+
+The application is deployed across a decoupled 3-tier cloud infrastructure:
+
+```mermaid
+graph LR
+    User([👤 User Web Browser])
+    Vercel[🌐 VERCEL EDGE CDN\nReact 19 Frontend SPA\nLive Global Deployment]
+    Render[⚙️ RENDER WEB SERVICE\nExpress.js REST API Server\nSingapore Cloud Container]
+    Neon[(🗄️ NEON POSTGRESQL\nServerless Database\nAWS Asia-Pacific)]
+
+    User -->|"1. HTTPS / Web Traffic"| Vercel
+    User -->|"2. REST API Calls (Bearer JWT)"| Render
+    Render -->|"3. Parameterized SQL (SSL 5432)"| Neon
+    Neon -->|"4. Rows & JSON Results"| Render
+    Render -->|"5. JSON Payload Response"| User
+```
+
+### Cloud Component Details:
+| Component | Cloud Host | Live URL / Connection | Details |
+| :--- | :--- | :--- | :--- |
+| **Frontend UI** | **Vercel** | [Live Vercel URL](https://department-management-nsts7zbfi-rajal1.vercel.app) | React 19 + Vite SPA distributed on global edge network |
+| **Backend API** | **Render** | [nuv-department-api.onrender.com](https://nuv-department-api.onrender.com/api/health) | Node.js Express container running 24/7 in Singapore |
+| **PostgreSQL DB** | **Neon** | `ep-holy-wave-b3fspyik-pooler...` | Managed Serverless PostgreSQL 16 over encrypted SSL |
+
 
 ---
 
