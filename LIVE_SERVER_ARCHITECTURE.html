@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NUV ERP - Live Server & Cloud Architecture Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.85);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-highlight: rgba(59, 130, 246, 0.4);
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-indigo: #6366f1;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --code-bg: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 2.5rem 1.5rem 5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 1050px;
+      width: 100%;
+    }
+
+    /* Hero Header */
+    .hero-card {
+      background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.2), transparent 50%),
+                  linear-gradient(180deg, #131b2e 0%, #0d1322 100%);
+      border: 1px solid var(--border-highlight);
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 800px;
+    }
+
+    /* Section Cards */
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 2.5rem 0 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    /* 3 Pillars Grid */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .pillar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-highlight);
+    }
+
+    .pillar-card.frontend { border-top: 4px solid var(--accent-cyan); }
+    .pillar-card.backend { border-top: 4px solid var(--accent-indigo); }
+    .pillar-card.database { border-top: 4px solid var(--accent-emerald); }
+
+    .pillar-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .pillar-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .pillar-card.frontend .pillar-icon { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+    .pillar-card.backend .pillar-icon { background: rgba(99, 102, 241, 0.15); color: var(--accent-indigo); }
+    .pillar-card.database .pillar-icon { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+
+    .pillar-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .pillar-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pillar-card.frontend .pillar-tag { color: var(--accent-cyan); }
+    .pillar-card.backend .pillar-tag { color: var(--accent-indigo); }
+    .pillar-card.database .pillar-tag { color: var(--accent-emerald); }
+
+    .meta-list {
+      list-style: none;
+      margin-top: 1rem;
+    }
+
+    .meta-item {
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .meta-item:last-child {
+      border-bottom: none;
+    }
+
+    .meta-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .meta-value {
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      word-break: break-all;
+    }
+
+    .meta-value a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    .meta-value a:hover {
+      text-decoration: underline;
+    }
+
+    /* Architecture Diagram Box */
+    .diagram-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .mermaid-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+    }
+
+    /* Speech Script Box */
+    .speech-box {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .speech-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .speech-quote {
+      font-size: 1.05rem;
+      color: #e2e8f0;
+      line-height: 1.7;
+      font-style: italic;
+      border-left: 3px solid var(--accent-indigo);
+      padding-left: 1.25rem;
+      margin: 0;
+    }
+
+    /* Comparison Table */
+    .table-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 1rem 1.25rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tag-blue { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    .tag-purple { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
+    .tag-green { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+
+    /* Action Buttons */
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header Banner -->
+    <div class="hero-card">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        All Cloud Systems Operational
+      </div>
+      <h1>Live Server & Deployment Architecture</h1>
+      <p class="subtitle">Where the Frontend, Backend, and PostgreSQL Database are hosted on the internet, and how they communicate with 100% cloud decoupling.</p>
+    </div>
+
+    <!-- 3 Pillars Breakdown -->
+    <h2 class="section-title">☁️ 1. The 3 Live Cloud Hosting Environments</h2>
+    
+    <div class="pillars-grid">
+      
+      <!-- 1. Frontend -->
+      <div class="pillar-card frontend">
+        <div class="pillar-header">
+          <div class="pillar-icon">🌐</div>
+          <div>
+            <div class="pillar-tag">Presentation Tier</div>
+            <div class="pillar-title">Frontend (React 19)</div>
+          </div>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Serves the compiled single-page application (SPA) to browsers worldwide.</p>
+        
+        <ul class="meta-list">
+          <li class="meta-item">
+            <span class="meta-label">Cloud Host</span>
+            <span class="meta-value"><strong>Vercel</strong> (Global Edge Network)</span>
+          </li>
+          <li class="meta-item">
+            <span class="meta-label">Technology Stack</span>
+            <span class="meta-value">React 19 + Vite + Lucide Icons</span>
+          </li>
+          <li class="meta-item">
+            <span class="meta-label">Physical Deployment</span>
+            <span class="meta-value">Distributed CDN across 100+ global edge locations</span>
+          </li>
+          <li class="meta-item">
+            <span class="meta-label">Environment Variable</span>
+            <span class="meta-value"><code>VITE_API_URL</code> pointing to Render</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 2. Backend -->
+      <div class="pillar-card backend">
+        <div class="pillar-header">
+          <div class="pillar-icon">⚙️</div>
+          <div>
+            <div class="pillar-tag">Application Tier</div>
+            <div class="pillar-title">Backend (Express API)</div>
+          </div>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Processes authentication, validates business logic, and manages REST routes.</p>
+        
+        <ul class="meta-list">
+          <li class="meta-item">
+            <span class="meta-label">Cloud Host</span>
+            <span class="meta-value"><strong>Render.com</strong> (Web Service Container)</span>
+          </li>
+          <li class="meta-item">
+            <span class="meta-label">Live API URL</span>
+            <span class="meta-value"><a href="https://nuv-department-api.onrender.com/api/health" target="_blank">nuv-department-api.onrender.com</a></span>
+          </li>
+          <li class="meta-item">
+            <span class="meta-label">Technology Stack</span>
+            <span class="meta-value">Node.js + Express.js + pg Driver</span>
+          </li>
+          <li class="meta-item">
+            <span class="meta-label">Container Location</span>
+            <span class="meta-value">Linux Container (Singapore Cloud Region)</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 3. Database -->
+      <div class="pillar-card database">
+        <div class="pillar-header">
+          <div class="pillar-icon">🗄️</div>
+          <div>
+            <div class="pillar-tag">Persistence Tier</div>
+            <div class="pillar-title">PostgreSQL Database</div>
+          </div>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Provides persistent ACID storage, foreign keys, and automatic backups.</p>
+        
+        <ul class="meta-list">
+          <li class="meta-item">
+            <span class="meta-label">Cloud Host</span>
+            <span class="meta-value"><strong>Neon.tech</strong> (Serverless PostgreSQL)</span>
+          </li>
+          <li class="meta-item">
+            <span class="meta-label">Database Engine</span>
+            <span class="meta-value">PostgreSQL 16 (nuv_department_db)</span>
+          </li>
+          <li class="meta-item">
+            <span class="meta-label">Encrypted Connection</span>
+            <span class="meta-value">SSL/TLS over Port 5432 (TCP)</span>
+          </li>
+          <li class="meta-item">
+            <span class="meta-label">Physical Datacenter</span>
+            <span class="meta-value">AWS Asia-Pacific (Singapore Region)</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Live Data Flow Diagram -->
+    <h2 class="section-title">🔄 2. Live Request Flow on the Internet</h2>
+    
+    <div class="diagram-card">
+      <div class="mermaid-wrapper">
+        <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor User as 👤 End User (Browser / Mobile)
+    participant Vercel as 🌐 VERCEL (Frontend CDN)
+    participant Render as ⚙️ RENDER (Node.js API Server)
+    participant Neon as 🗄️ NEON (PostgreSQL Cloud)
+
+    User->>Vercel: 1. Visits https://your-project.vercel.app (HTTPS)
+    Vercel-->>User: Delivers compiled React HTML/CSS/JS bundles
+    User->>Render: 2. API Call: POST /api/auth/login or GET /api/departments (JWT)
+    Note over Render: Express middleware validates JWT token & checks user role
+    Render->>Neon: 3. Parameterized SQL Query over Encrypted SSL (Port 5432)
+    Neon-->>Render: 4. Returns query records / rows in JSON
+    Render-->>User: 5. Sends HTTP 200 OK + JSON Response payload
+    Note over User: React re-renders table/charts with zero page reload
+        </div>
+      </div>
+    </div>
+
+    <!-- What to say in presentation -->
+    <h2 class="section-title">🎤 3. How to Explain This in an Interview / Presentation</h2>
+    
+    <div class="speech-box">
+      <div class="speech-title">
+        <span>🗣️</span> Recommended Speech Script
+      </div>
+      <p class="speech-quote">
+        "Our Department Management System is deployed on a fully decoupled 3-tier cloud architecture. The <strong>React frontend</strong> is hosted on <strong>Vercel's Edge CDN</strong> for fast global loading. The <strong>Express.js backend API</strong> is containerized on <strong>Render</strong> in Singapore, handling business logic and JWT authentication. All persistent university records are stored in a managed <strong>PostgreSQL cluster on Neon</strong> with encrypted SSL connection pooling. Whenever a user performs an action in the UI, an HTTPS request travels to Render, which securely queries Neon PostgreSQL and returns live data."
+      </p>
+    </div>
+
+    <!-- Local vs Live Matrix -->
+    <h2 class="section-title">📊 4. Local Development vs. Live Production</h2>
+    
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>Local Development (Laptop)</th>
+            <th>Live Production (Internet)</th>
+            <th>Security / Protocol</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Frontend</strong></td>
+            <td><span class="tag tag-blue">http://localhost:5173</span></td>
+            <td><span class="tag tag-blue">Vercel Global Edge CDN</span></td>
+            <td>HTTPS / TLS 1.3</td>
+          </tr>
+          <tr>
+            <td><strong>Backend API</strong></td>
+            <td><span class="tag tag-purple">http://localhost:5000</span></td>
+            <td><span class="tag tag-purple">https://nuv-department-api.onrender.com</span></td>
+            <td>Bearer JWT + CORS</td>
+          </tr>
+          <tr>
+            <td><strong>Database</strong></td>
+            <td><span class="tag tag-green">localhost:5432 (Local Postgres)</span></td>
+            <td><span class="tag tag-green">Neon AWS Cloud PostgreSQL</span></td>
+            <td>SSL Encrypted (sslmode=require)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#111827',
+        primaryColor: '#3b82f6',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#60a5fa',
+        lineColor: '#06b6d4',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a'
+      }
+    });
+  </script>
+</body>
+</html>

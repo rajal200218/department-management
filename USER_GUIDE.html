@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NUV ERP - Department Management System | Complete User & Architecture Manual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(59, 130, 246, 0.3);
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-indigo: #6366f1;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --code-bg: #1e293b;
+      --sidebar-width: 300px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      overflow-y: auto;
+      padding: 2rem 1.25rem;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-group-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 1.25rem 0 0.5rem 0.5rem;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      list-style: none;
+    }
+
+    .nav-links li {
+      margin-bottom: 0.25rem;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      transform: translateX(4px);
+    }
+
+    /* Main Content Container */
+    .content-wrapper {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 3rem 4rem 6rem;
+      max-width: 1200px;
+    }
+
+    /* Header Banner */
+    .hero-banner {
+      background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 60%),
+                  linear-gradient(180deg, var(--bg-secondary) 0%, rgba(17, 24, 39, 0.4) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 0.3rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 750px;
+    }
+
+    /* Section Styling */
+    section {
+      margin-bottom: 4rem;
+      scroll-margin-top: 2rem;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ffffff;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.75rem 0 0.75rem;
+      color: var(--accent-cyan);
+    }
+
+    p {
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      font-size: 1rem;
+    }
+
+    ul, ol {
+      margin: 0 0 1.25rem 1.5rem;
+      color: var(--text-secondary);
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    /* Cards & Glassmorphism */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--border-highlight);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-text {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 0;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: var(--bg-secondary);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-primary);
+      font-weight: 600;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-primary);
+    }
+
+    /* Code Blocks */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: rgba(255, 255, 255, 0.08);
+      color: #93c5fd;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* Alerts */
+    .alert {
+      background: rgba(59, 130, 246, 0.1);
+      border-left: 4px solid var(--accent-blue);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      border-left-color: var(--accent-emerald);
+    }
+
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border-left-color: var(--accent-amber);
+    }
+
+    .alert-title {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+    }
+
+    /* Mermaid Diagrams */
+    .mermaid-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      margin: 1.5rem 0;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    /* Print & Responsive */
+    @media (max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+      .content-wrapper {
+        margin-left: 0;
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🏛️</div>
+      <div>
+        <div class="brand-title">NUV ERP</div>
+        <div class="brand-subtitle">Module 12 Manual</div>
+      </div>
+    </div>
+
+    <div class="nav-group-title">Overview</div>
+    <ul class="nav-links">
+      <li><a href="#summary">1. Executive Summary</a></li>
+      <li><a href="#architecture">2. System Architecture</a></li>
+      <li><a href="#locations">3. Where Everything Runs</a></li>
+      <li><a href="#structure">4. Folder & File Breakdown</a></li>
+    </ul>
+
+    <div class="nav-group-title">Operations & Data</div>
+    <ul class="nav-links">
+      <li><a href="#workflow">5. Application Workflow</a></li>
+      <li><a href="#database">6. Database & ERD</a></li>
+      <li><a href="#rbac">7. Authentication & Roles</a></li>
+    </ul>
+
+    <div class="nav-group-title">Execution & Cloud</div>
+    <ul class="nav-links">
+      <li><a href="#setup">8. Setup & Execution</a></li>
+      <li><a href="#features">9. Feature Walkthrough</a></li>
+      <li><a href="#troubleshooting">10. Troubleshooting</a></li>
+      <li><a href="#deployment">11. Cloud Deployment</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content-wrapper">
+    
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <span class="badge">🚀 NUV ERP Phase 2 • Module 12</span>
+      <h1>Department Management System</h1>
+      <p class="subtitle">Complete Technical Architecture Guide, Data Flow Manual & User Operations Blueprint for Navrachana University, Vadodara.</p>
+    </div>
+
+    <!-- 1. Executive Summary -->
+    <section id="summary">
+      <h2>🏛️ 1. Executive Summary & Purpose</h2>
+      <p>The <strong>Department Management System</strong> centralizes academic administration across all Schools, Institutes, Departments, Degree Programs, and Faculty Members at Navrachana University (NUV).</p>
+      
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">🏢 Academic Hierarchy</div>
+          <p class="card-text">Maintains relational links between Schools $\rightarrow$ Departments $\rightarrow$ Academic Programs $\rightarrow$ Faculty Staff.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🔒 Role-Based Access</div>
+          <p class="card-text">Granular permission control for Admin/Superadmin, Academic Deans, Department HODs, and Faculty.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🗓️ Academic Sessions</div>
+          <p class="card-text">Contextualizes metrics and reporting across historical, active, and upcoming academic sessions.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">⚡ PostgreSQL Reliability</div>
+          <p class="card-text">ACID-compliant storage, connection pooling, foreign key constraints, and live query diagnostics.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. System Architecture -->
+    <section id="architecture">
+      <h2>📐 2. End-to-End System Architecture</h2>
+      <p>The platform is designed following a clean <strong>3-Tier Decoupled Architecture</strong>:</p>
+
+      <div class="mermaid-box">
+        <div class="mermaid">
+graph TD
+    subgraph Presentation ["1. Presentation Layer (Frontend)"]
+        UI["React 19 + Vite SPA"]
+        State["Client Auth & LocalStorage (JWT)"]
+        Components["Dashboard, Departments, Faculty, Modals"]
+    end
+
+    subgraph Application ["2. Application Layer (Backend API)"]
+        Express["Express.js Server (Port 5000 / 10000)"]
+        AuthMiddleware["JWT & RBAC Middleware"]
+        Controllers["Controllers (Auth, Dept, Faculty, School, Program, Session)"]
+        EmailService["Nodemailer (SMTP / Console Fallback)"]
+    end
+
+    subgraph Persistence ["3. Persistence Layer (Database)"]
+        Pool["pg.Pool Connection Pooler"]
+        Postgres["PostgreSQL Database (Local / Neon Cloud)"]
+        Tables["users, schools, departments, faculty, programs, academic_sessions"]
+    end
+
+    UI -->|"HTTPS / REST API JSON (Bearer Token)"| Express
+    Express --> AuthMiddleware
+    AuthMiddleware --> Controllers
+    Controllers -->|"SQL Queries via Pool"| Postgres
+    Postgres -->|"Rows / JSON Results"| Controllers
+    Controllers -->|"JSON Response"| UI
+    Controllers -.->|"Password Reset OTP"| EmailService
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Where Everything Runs -->
+    <section id="locations">
+      <h2>🖥️ 3. Where Everything Runs (Local vs. Cloud)</h2>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Local Environment</th>
+              <th>Production Cloud</th>
+              <th>Function</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Frontend</strong></td>
+              <td><code>http://localhost:5173</code></td>
+              <td><code>https://department-management...vercel.app</code></td>
+              <td>React 19 single page application user interface</td>
+            </tr>
+            <tr>
+              <td><strong>Backend API</strong></td>
+              <td><code>http://localhost:5000</code></td>
+              <td><code>https://nuv-department-api.onrender.com</code></td>
+              <td>Node.js Express REST API server</td>
+            </tr>
+            <tr>
+              <td><strong>Database</strong></td>
+              <td><code>localhost:5432 (nuv_department_db)</code></td>
+              <td><code>Neon Serverless PostgreSQL Cloud</code></td>
+              <td>Relational persistent data store</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. Folder & File Breakdown -->
+    <section id="structure">
+      <h2>📁 4. Folder & File Structure Breakdown</h2>
+      <pre><code>department-management/
+├── database/                        # PostgreSQL DDL & Seed Scripts
+│   ├── schema.sql                   # Relational tables, indexes, constraints
+│   └── seed.sql                     # Realistic NUV university sample datasets
+├── backend/                         # Express.js REST API Server
+│   ├── src/
+│   │   ├── controllers/             # Business logic (auth, dept, faculty, etc.)
+│   │   ├── db/database.js           # PostgreSQL connection pool & query logger
+│   │   ├── middleware/authMiddleware.js # JWT & Role authorization
+│   │   └── server.js                # Express app startup & routes
+│   └── package.json                 # Backend dependencies
+├── frontend/                        # React 19 + Vite Single Page Application
+│   ├── src/
+│   │   ├── components/              # Reusable UI widgets & Modals
+│   │   ├── pages/                   # Dashboard, Departments, Faculty, Login
+│   │   ├── services/api.js          # Fetch client with JWT interceptor
+│   │   └── App.jsx                  # Main application router
+│   ├── .env.production              # Production API URL
+│   └── vercel.json                  # SPA routing configuration
+└── start-all.bat                    # One-click Windows launch script</code></pre>
+    </section>
+
+    <!-- 5. Application Workflow -->
+    <section id="workflow">
+      <h2>🔄 5. Application Workflow & Request Lifecycle</h2>
+      <p>When an authenticated administrator performs an action (e.g. creating a department):</p>
+      
+      <div class="mermaid-box">
+        <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor User as Admin User
+    participant Browser as React Frontend (Vite)
+    participant API as Express API Server
+    participant DB as PostgreSQL Database
+
+    User->>Browser: Enters Department info & clicks "Create"
+    Browser->>Browser: Validates required inputs
+    Browser->>API: POST /api/departments (Headers: Authorization Bearer JWT)
+    API->>API: authMiddleware verifies token & verifies admin role
+    API->>DB: INSERT INTO departments (name, code, school_id...) VALUES ($1, $2...)
+    DB-->>API: Returns inserted row record + ID
+    API->>API: Logs query duration in ms
+    API-->>Browser: HTTP 201 Created { success: true, data: { ... } }
+    Browser->>Browser: Updates UI table & displays success toast
+    Browser-->>User: Department card appears instantly in grid
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Database Architecture -->
+    <section id="database">
+      <h2>🗄️ 6. Database Architecture & ERD</h2>
+      
+      <div class="mermaid-box">
+        <div class="mermaid">
+erDiagram
+    SCHOOLS ||--o{ DEPARTMENTS : "contains"
+    DEPARTMENTS ||--o{ FACULTY : "employs"
+    DEPARTMENTS ||--o{ PROGRAMS : "offers"
+    DEPARTMENTS ||--o| FACULTY : "headed_by (hod_id)"
+    USERS ||--o{ FACULTY : "linked_by_email"
+    ACADEMIC_SESSIONS ||--o{ DEPARTMENTS : "contextualizes"
+
+    SCHOOLS {
+        int id PK
+        string school_name
+        string school_code UK
+        string dean_name
+    }
+    DEPARTMENTS {
+        int id PK
+        string department_name
+        string department_code UK
+        int school_id FK
+        int hod_id FK
+    }
+    FACULTY {
+        int id PK
+        int department_id FK
+        string name
+        string email UK
+        string designation
+    }
+    PROGRAMS {
+        int id PK
+        int department_id FK
+        string program_name
+        string degree_level
+    }
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Authentication & Roles -->
+    <section id="rbac">
+      <h2>🔐 7. Authentication & Role Permissions (RBAC)</h2>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature / Action</th>
+              <th>Admin / Dean</th>
+              <th>Head of Dept (HOD)</th>
+              <th>Faculty Member</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>View Dashboard Metrics</strong></td>
+              <td>✅ Full University</td>
+              <td>🟡 Scoped to Dept</td>
+              <td>🟡 Overview Only</td>
+            </tr>
+            <tr>
+              <td><strong>Manage Schools</strong></td>
+              <td>✅ Full CRUD</td>
+              <td>❌ Read-Only</td>
+              <td>❌ Read-Only</td>
+            </tr>
+            <tr>
+              <td><strong>Create / Edit Departments</strong></td>
+              <td>✅ Full CRUD</td>
+              <td>❌ Read-Only</td>
+              <td>❌ Read-Only</td>
+            </tr>
+            <tr>
+              <td><strong>Assign Department HOD</strong></td>
+              <td>✅ Yes</td>
+              <td>❌ No</td>
+              <td>❌ No</td>
+            </tr>
+            <tr>
+              <td><strong>Add / Edit Faculty</strong></td>
+              <td>✅ Any Department</td>
+              <td>🟡 Own Dept Only</td>
+              <td>❌ Profile View</td>
+            </tr>
+            <tr>
+              <td><strong>Manage Academic Sessions</strong></td>
+              <td>✅ Full Control</td>
+              <td>❌ View Only</td>
+              <td>❌ View Only</td>
+            </tr>
+            <tr>
+              <td><strong>Excel Export</strong></td>
+              <td>✅ Global Reports</td>
+              <td>✅ Dept Reports</td>
+              <td>✅ Roster Export</td>
+            </tr>
+            <tr>
+              <td><strong>Live SQL Activity Drawer</strong></td>
+              <td>✅ Admin Only</td>
+              <td>❌ Hidden</td>
+              <td>❌ Hidden</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>🔑 Default Demo Credentials</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Scope</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>System Admin</strong></td>
+              <td><code>admin@nuv.ac.in</code></td>
+              <td><code>admin123</code></td>
+              <td>Global Superadmin Access</td>
+            </tr>
+            <tr>
+              <td><strong>Dean Academic</strong></td>
+              <td><code>dean.academic@nuv.ac.in</code></td>
+              <td><code>admin123</code></td>
+              <td>University Academic Oversight</td>
+            </tr>
+            <tr>
+              <td><strong>HOD (CSE Dept)</strong></td>
+              <td><code>rajesh.sharma@nuv.ac.in</code></td>
+              <td><code>admin123</code></td>
+              <td>Computer Science & Engineering</td>
+            </tr>
+            <tr>
+              <td><strong>Faculty Member</strong></td>
+              <td><code>priya.desai@nuv.ac.in</code></td>
+              <td><code>admin123</code></td>
+              <td>Read-Only Faculty Access</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 8. Setup & Execution -->
+    <section id="setup">
+      <h2>🚀 8. Setup & Execution Guide</h2>
+
+      <div class="alert alert-success">
+        <div class="alert-title">⚡ Quick Windows Launch</div>
+        Double click <code>start-all.bat</code> in the project root to start both Frontend & Backend with a single click.
+      </div>
+
+      <h3>Manual Step-by-Step Commands:</h3>
+      <pre><code># 1. Start Backend API Server
+cd backend
+npm install
+npm run seed       # Populates PostgreSQL with realistic NUV university records
+npm run dev        # Starts Express server at http://localhost:5000
+
+# 2. Start Frontend React App (in a separate terminal)
+cd frontend
+npm install
+npm run dev        # Launches React Vite at http://localhost:5173</code></pre>
+    </section>
+
+    <!-- 9. Features -->
+    <section id="features">
+      <h2>✨ 9. Feature & Module Walkthrough</h2>
+      
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">📊 Dynamic Dashboard</div>
+          <p class="card-text">Live statistics, faculty counts, student distribution charts, and session filters.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🏛️ Department Profiles</div>
+          <p class="card-text">In-depth overview showing assigned HOD, enrolled faculty, offered degrees, and contacts.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">📄 Excel Exporter</div>
+          <p class="card-text">Exports formatted <code>.xlsx</code> spreadsheets natively from browser tables.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🛡️ OTP Password Reset</div>
+          <p class="card-text">Generates 6-digit cryptographic tokens for self-service password recovery.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Troubleshooting -->
+    <section id="troubleshooting">
+      <h2>🔧 10. Troubleshooting & FAQ</h2>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Error Message</th>
+              <th>Probable Cause</th>
+              <th>Solution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>ECONNREFUSED 127.0.0.1:5432</code></td>
+              <td>Local PostgreSQL server is offline</td>
+              <td>Start PostgreSQL service in Windows Services or pgAdmin</td>
+            </tr>
+            <tr>
+              <td><code>NetworkError / Failed to fetch</code></td>
+              <td>Backend server is not running or wrong API URL</td>
+              <td>Verify backend is running on port 5000 or check <code>VITE_API_URL</code></td>
+            </tr>
+            <tr>
+              <td><code>404 Not Found on Page Refresh</code></td>
+              <td>SPA client rewrite missing in cloud hosting</td>
+              <td>Ensure <code>frontend/vercel.json</code> exists in the repository</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 11. Cloud Deployment -->
+    <section id="deployment">
+      <h2>☁️ 11. Production Cloud Deployment Architecture</h2>
+      
+      <div class="mermaid-box">
+        <div class="mermaid">
+graph LR
+    User([End User Browser])
+    Vercel[Vercel Global CDN\nReact 19 Frontend SPA]
+    Render[Render Web Service\nExpress.js API Server]
+    Neon[(Neon Cloud Serverless\nPostgreSQL Database)]
+
+    User -->|"1. HTTPS Requests"| Vercel
+    User -->|"2. REST API Calls (JWT)"| Render
+    Render -->|"3. Parameterized SQL (SSL)"| Neon
+    Neon -->|"4. Query Results"| Render
+    Render -->|"5. JSON Response"| User
+        </div>
+      </div>
+
+      <div class="alert">
+        <div class="alert-title">🎉 Live Production Status</div>
+        All code is linked to GitHub CI/CD. Any <code>git push origin main</code> triggers automatic builds on Vercel and Render with zero downtime!
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#111827',
+        primaryColor: '#3b82f6',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#60a5fa',
+        lineColor: '#06b6d4',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a'
+      }
+    });
+  </script>
+</body>
+</html>
