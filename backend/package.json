@@ -1,0 +1,29 @@
+{
+  "name": "nuv-department-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Navrachana University (NUV) ERP Phase 2 Module 12 - Department Management",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/db/seedRunner.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemailer": "^10.0.16",
+    "pg": "^8.12.0"
+  },
+  "keywords": [
+    "erp",
+    "department-management",
+    "navrachana-university",
+    "nuv",
+    "express",
+    "postgresql"
+  ],
+  "author": "Navrachana University",
+  "license": "ISC"
+}
