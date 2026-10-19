@@ -1,7 +1,7 @@
 {
   "name": "nuv-department-backend",
   "version": "1.0.0",
-  "description": "Backend API for Navrachana University (NUV) ERP Phase 2 Module 12 - Department Management",
+  "description": "Backend API for LJ University ERP Phase 2 Module 12 - Department Management",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -19,11 +19,11 @@
   "keywords": [
     "erp",
     "department-management",
-    "navrachana-university",
+    "lj-university",
     "nuv",
     "express",
     "postgresql"
   ],
-  "author": "Navrachana University",
+  "author": "LJ University",
   "license": "ISC"
 }

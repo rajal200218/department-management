@@ -208,7 +208,7 @@ export default function Login({ onLoginSuccess }) {
           </div>
 
           <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#FFF', marginBottom: '0.35rem', letterSpacing: '-0.02em' }}>
-            NAVRACHANA UNIVERSITY
+            LJ UNIVERSITY
           </h1>
           <p style={{ fontSize: '0.875rem', color: '#94A3B8', fontWeight: 500 }}>
             Department Management System
@@ -826,7 +826,7 @@ export default function Login({ onLoginSuccess }) {
           fontSize: '0.75rem'
         }}>
           <ShieldCheck size={14} color="#10B981" />
-          <span>Encrypted Session • Navrachana University ERP</span>
+          <span>Encrypted Session • LJ University ERP</span>
         </div>
       </div>
     </div>

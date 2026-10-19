@@ -1,4 +1,4 @@
-# 🏛️ NAVRACHANA UNIVERSITY (NUV) ERP
+# 🏛️ LJ UNIVERSITY ERP
 ## Phase 2 Module 12: Department Management System
 ### 📖 Complete Architecture Manual & New User Guide
 
@@ -21,7 +21,7 @@
 
 ## 1. Executive Summary & System Purpose
 
-The **Department Management System (Module 12)** is a mission-critical core module within the **Navrachana University (NUV) ERP Phase 2** ecosystem. It centralizes and automates academic administration across all schools, institutes, departments, programs, and faculty members under Navrachana University, Vadodara.
+The **Department Management System (Module 12)** is a mission-critical core module within the **LJ University ERP Phase 2** ecosystem. It centralizes and automates academic administration across all schools, institutes, departments, programs, and faculty members under LJ University.
 
 ### Key Objectives
 * **Unified Academic Hierarchy:** Maintains relational links between Schools $\rightarrow$ Departments $\rightarrow$ Academic Programs $\rightarrow$ Faculty Members.
@@ -439,4 +439,4 @@ graph LR
 
 ---
 
-*Document prepared for Navrachana University (NUV) ERP Engineering Team.*
+*Document prepared for LJ University ERP Engineering Team.*

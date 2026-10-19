@@ -105,7 +105,7 @@ export default function ProgramModal({
                 {isEdit ? 'Edit Academic Program' : 'Add New Academic Program'}
               </h3>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                Degree Programs & Curriculum • Navrachana University
+                Degree Programs & Curriculum • LJ University
               </p>
             </div>
           </div>

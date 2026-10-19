@@ -1,5 +1,5 @@
 # ☁️ Live Server & Cloud Architecture Guide
-## Navrachana University (NUV) ERP — Department Management System
+## LJ University ERP — Department Management System
 
 ---
 
@@ -183,4 +183,4 @@ graph LR
 
 ---
 
-*Document prepared for Navrachana University (NUV) ERP Engineering Team.*
+*Document prepared for LJ University ERP Engineering Team.*

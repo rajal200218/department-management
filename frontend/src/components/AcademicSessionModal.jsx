@@ -61,7 +61,7 @@ export default function AcademicSessionModal({ isOpen, onClose, onAddSession, ex
             </div>
             <div>
               <h2 className="modal-title">Add Academic Session</h2>
-              <p className="modal-subtitle">Create a new academic calendar year for Navrachana University</p>
+              <p className="modal-subtitle">Create a new academic calendar year for LJ University</p>
             </div>
           </div>
           <button className="btn-icon" onClick={onClose}>

@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 
 /**
- * Clean & Professional Excel (.xlsx) Exporter for Navrachana University (NUV)
+ * Clean & Professional Excel (.xlsx) Exporter for LJ University
  * @param {Array<Object>} data - Array of row objects to export
  * @param {string} fileName - Base filename (e.g. 'NUV_Departments')
  * @param {string} sheetName - Worksheet tab title (e.g. 'Departments')

@@ -47,8 +47,8 @@ app.use('/api/sessions', sessionRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
-    university: 'Navrachana University (NUV)',
-    module: 'NUV ERP - Phase 2 Module 12: Department Management',
+    university: 'LJ University',
+    module: 'LJ University ERP - Phase 2 Module 12: Department Management',
     dbMode: getDbMode(),
     timestamp: new Date().toISOString()
   });
@@ -73,7 +73,7 @@ async function startServer() {
     const smtpReady = isSmtpConfigured();
     console.log(`
 ===========================================================
-🏛️  NAVRACHANA UNIVERSITY (NUV) ERP - DEPARTMENT MANAGEMENT
+🏛️  LJ UNIVERSITY ERP - DEPARTMENT MANAGEMENT
 🚀  Backend Server running at: http://localhost:${PORT}
 📡  Health check: http://localhost:${PORT}/api/health
 📊  Database Engine: ${getDbMode()} (nuv_department_db)

@@ -135,7 +135,7 @@ export default function FacultyModal({
                 {isEdit ? 'Edit Faculty & Credentials' : 'Add Faculty & Assign Password'}
               </h3>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                Academic Roster & Authentication • Navrachana University
+                Academic Roster & Authentication • LJ University
               </p>
             </div>
           </div>

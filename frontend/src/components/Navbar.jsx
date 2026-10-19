@@ -90,7 +90,7 @@ export default function Navbar({
             letterSpacing: '0.01em',
             lineHeight: 1.2
           }}>
-            NAVRACHANA UNIVERSITY
+            LJ UNIVERSITY
           </div>
           <div style={{
             fontSize: '0.75rem',
@@ -98,7 +98,7 @@ export default function Navbar({
             fontWeight: 500,
             marginTop: '2px'
           }}>
-            Department Management System • NUV
+            Department Management System • LJ University
           </div>
         </div>
       </div>
@@ -200,7 +200,7 @@ export default function Navbar({
                   color: '#60A5FA',
                   fontWeight: 600
                 }}>
-                  NUV ERP
+                  LJ ERP
                 </div>
               </div>
 

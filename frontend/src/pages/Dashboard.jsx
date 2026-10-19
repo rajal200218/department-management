@@ -102,7 +102,7 @@ export default function Dashboard({ stats, onNavigate, onOpenAddDepartment, user
     {
       title: 'My Role & Status',
       value: user?.role ? user.role.toUpperCase() : 'ACTIVE',
-      subtitle: 'Navrachana University Faculty',
+      subtitle: 'LJ University Faculty',
       icon: UserCheck,
       color: '#34D399',
       bgGlow: 'rgba(16, 185, 129, 0.15)',
@@ -127,7 +127,7 @@ export default function Dashboard({ stats, onNavigate, onOpenAddDepartment, user
           </h1>
           <p style={{ color: '#94A3B8', fontSize: '0.875rem' }}>
             {admin 
-              ? 'Navrachana University (NUV) • Department Management System live analytics & operations'
+              ? 'LJ University • Department Management System live analytics & operations'
               : `Logged in as ${user?.name} (${user?.role}) • Scoped Department View`}
           </p>
         </div>

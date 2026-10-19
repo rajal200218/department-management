@@ -1,6 +1,6 @@
 @echo off
 echo ===================================================
-echo   NAVRACHANA UNIVERSITY (NUV) - DEPARTMENT SYSTEM
+echo   LJ UNIVERSITY - DEPARTMENT SYSTEM
 echo ===================================================
 echo Starting Backend Server (Port 5000)...
 start cmd /k "cd backend && npm run dev"

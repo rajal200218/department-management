@@ -1,6 +1,6 @@
 -- =========================================================================
--- NAVRACHANA UNIVERSITY (NUV) ERP - SEED DATA SCRIPT
--- Realistic Academic Sample Data for Navrachana University (Vadodara)
+-- LJ UNIVERSITY ERP - SEED DATA SCRIPT
+-- Realistic Academic Sample Data for LJ University
 -- =========================================================================
 
 -- 1. Insert Default Admin User (Password: admin123)
@@ -19,7 +19,7 @@ VALUES
 
 SELECT setval('academic_sessions_id_seq', 4, true);
 
--- 3. Insert Schools / Institutes under Navrachana University (NUV)
+-- 3. Insert Schools / Institutes under LJ University
 INSERT INTO schools (school_name, school_code, dean_name, contact_email, contact_phone, building, status)
 VALUES 
 ('School of Engineering & Technology (SET)', 'NUV-SET', 'Dr. Rajesh Sharma', 'dean.set@nuv.ac.in', '+91 265 2617 001', 'Engineering Block A', 'Active'),
@@ -31,7 +31,7 @@ VALUES
 -- 4. Insert Departments
 INSERT INTO departments (id, department_name, department_code, school_id, email, phone, established_year, faculty_count, building, room_no, description, status)
 VALUES 
-(1, 'Computer Science & Engineering', 'CSE', 1, 'hod.cse@nuv.ac.in', '+91 98765 43210', 2012, 5, 'Engineering Block A', 'Room A-301 (3rd Floor)', 'Focuses on cutting-edge computer engineering, system architecture, artificial intelligence, software engineering, and high-performance computing at Navrachana University.', 'Active'),
+(1, 'Computer Science & Engineering', 'CSE', 1, 'hod.cse@nuv.ac.in', '+91 98765 43210', 2012, 5, 'Engineering Block A', 'Room A-301 (3rd Floor)', 'Focuses on cutting-edge computer engineering, system architecture, artificial intelligence, software engineering, and high-performance computing at LJ University.', 'Active'),
 (2, 'Information Technology', 'IT', 1, 'hod.it@nuv.ac.in', '+91 98765 43211', 2014, 2, 'Engineering Block A', 'Room A-204 (2nd Floor)', 'Dedicated to modern cloud architectures, network security, web technologies, and enterprise data management systems.', 'Active'),
 (3, 'Artificial Intelligence & Machine Learning', 'AIML', 1, 'hod.aiml@nuv.ac.in', '+91 98765 43212', 2021, 3, 'Engineering Block A', 'Room A-402 (4th Floor)', 'Specialized research and curriculum in Deep Learning, Computer Vision, Natural Language Processing, and Autonomous Robotics.', 'Active'),
 (4, 'Electronics & Communication Engineering', 'ECE', 1, 'hod.ece@nuv.ac.in', '+91 98765 43213', 2010, 1, 'Engineering Block A', 'Room A-105 (1st Floor)', 'Pioneering studies in VLSI design, Embedded IoT devices, Telecommunications, and Signal Processing.', 'Active'),

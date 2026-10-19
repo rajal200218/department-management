@@ -94,7 +94,7 @@ export default function SchoolModal({
                 {isEdit ? 'Edit School / Institute' : 'Add New School / Institute'}
               </h3>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                Academic Structure • Navrachana University
+                Academic Structure • LJ University
               </p>
             </div>
           </div>

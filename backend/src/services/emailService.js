@@ -15,15 +15,15 @@ function isSmtpConfigured() {
  * Send password reset email with 6-digit OTP and recovery token
  */
 async function sendPasswordResetEmail({ toEmail, recipientName, otpCode, resetToken, expiresMinutes = 15 }) {
-  const fromAddress = process.env.SMTP_FROM || 'Navrachana University ERP <no-reply@nuv.ac.in>';
-  const subject = `[NUV ERP] Password Reset Verification Code: ${otpCode}`;
+  const fromAddress = process.env.SMTP_FROM || 'LJ University ERP <no-reply@nuv.ac.in>';
+  const subject = `[LJ University ERP] Password Reset Verification Code: ${otpCode}`;
 
   const htmlContent = `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
-      <title>Password Recovery - Navrachana University</title>
+      <title>Password Recovery - LJ University</title>
       <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0B1120; color: #E2E8F0; padding: 20px; }
         .container { max-width: 520px; margin: 0 auto; background: #131E35; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 30px; }
@@ -36,10 +36,10 @@ async function sendPasswordResetEmail({ toEmail, recipientName, otpCode, resetTo
     </head>
     <body>
       <div class="container">
-        <div class="logo">NAVRACHANA UNIVERSITY</div>
+        <div class="logo">LJ UNIVERSITY</div>
         <div class="sub">Department Management System • Password Recovery</div>
         <p>Dear <strong>${recipientName || 'User'}</strong>,</p>
-        <p>We received a request to reset your password for your Navrachana University institutional account (<strong>${toEmail}</strong>).</p>
+        <p>We received a request to reset your password for your LJ University institutional account (<strong>${toEmail}</strong>).</p>
         <p>Use the following 6-digit verification code (OTP) to reset your password. This code will expire in <strong>${expiresMinutes} minutes</strong>:</p>
         
         <div class="otp-box">
@@ -50,7 +50,7 @@ async function sendPasswordResetEmail({ toEmail, recipientName, otpCode, resetTo
         <p style="font-size: 13px; color: #94A3B8;">If you did not request a password reset, please ignore this email or notify your system administrator immediately. No changes have been made to your account.</p>
 
         <div class="footer">
-          This is an automated institutional message from Navrachana University ERP. Please do not reply directly to this email.
+          This is an automated institutional message from LJ University ERP. Please do not reply directly to this email.
         </div>
       </div>
     </body>
@@ -58,7 +58,7 @@ async function sendPasswordResetEmail({ toEmail, recipientName, otpCode, resetTo
   `;
 
   const textContent = `
-NAVRACHANA UNIVERSITY - DEPARTMENT MANAGEMENT SYSTEM
+LJ UNIVERSITY - DEPARTMENT MANAGEMENT SYSTEM
 Password Reset Verification Code
 
 Dear ${recipientName || 'User'},

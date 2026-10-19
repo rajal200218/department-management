@@ -1,5 +1,5 @@
 -- =========================================================================
--- NAVRACHANA UNIVERSITY ERP - PHASE 2 MODULE 12: DEPARTMENT MANAGEMENT SYSTEM
+-- LJ UNIVERSITY ERP - PHASE 2 MODULE 12: DEPARTMENT MANAGEMENT SYSTEM
 -- Database Schema (PostgreSQL)
 -- Database Name: nuv_department_db
 -- =========================================================================

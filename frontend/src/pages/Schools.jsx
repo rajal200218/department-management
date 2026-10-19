@@ -67,7 +67,7 @@ export default function Schools({
             </span>
           </div>
           <p style={{ color: '#94A3B8', fontSize: '0.875rem' }}>
-            Academic umbrella institutes of Navrachana University (NUV) containing specialized departments
+            Academic umbrella institutes of LJ University containing specialized departments
           </p>
         </div>
 

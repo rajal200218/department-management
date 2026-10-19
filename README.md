@@ -1,4 +1,4 @@
-# 🎓 Navrachana University (NUV) ERP — Phase 2, Module 12: Department Management System
+# 🎓 LJ University ERP — Phase 2, Module 12: Department Management System
 
 [![PostgreSQL 14+](https://img.shields.io/badge/PostgreSQL-14%2B-blue.svg)](https://www.postgresql.org/)
 [![Node.js 18+](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
@@ -7,7 +7,7 @@
 [![RBAC Protected](https://img.shields.io/badge/Security-RBAC%20%2B%20JWT%20%2B%20Bcrypt-orange.svg)]()
 [![Documentation](https://img.shields.io/badge/Manual-USER__GUIDE.md-blueviolet.svg)](USER_GUIDE.md)
 
-A high-performance, enterprise-grade academic administration platform engineered for **Navrachana University (NUV)** under **Phase 2 (Academic Structure), Module 12: "Department Management System"**.
+A high-performance, enterprise-grade academic administration platform engineered for **LJ University** under **Phase 2 (Academic Structure), Module 12: "Department Management System"**.
 
 ---
 
@@ -271,4 +271,4 @@ Department Management/
 
 ## 📜 License & Accreditation Note
 
-Developed for **Navrachana University (NUV)** under Phase 2 of the Academic ERP Modernization Initiative. Designed in accordance with statutory academic accreditation guidelines (AICTE, UGC, NAAC, NIRF).
+Developed for **LJ University** under Phase 2 of the Academic ERP Modernization Initiative. Designed in accordance with statutory academic accreditation guidelines (AICTE, UGC, NAAC, NIRF).
