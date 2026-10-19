@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx';
  * @param {string} fileName - Base filename (e.g. 'NUV_Departments')
  * @param {string} sheetName - Worksheet tab title (e.g. 'Departments')
  */
-export function exportToExcel(data, fileName = 'NUV_Export', sheetName = 'Data') {
+export function exportToExcel(data, fileName = 'LJU_Export', sheetName = 'Data') {
   if (!data || data.length === 0) {
     alert('No data available to export.');
     return;

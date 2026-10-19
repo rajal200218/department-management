@@ -117,7 +117,69 @@ exports.login = async (req, res) => {
       });
     }
 
-    return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+    // 3. Check in `students` table (Student Portal)
+    const studentResult = await db.query(
+      `SELECT s.*, d.department_name, d.department_code, p.program_name, p.program_code
+       FROM students s
+       LEFT JOIN departments d ON s.department_id = d.id
+       LEFT JOIN programs p ON s.program_id = p.id
+       WHERE LOWER(s.email) = $1 OR LOWER(s.enrollment_no) = $1`,
+      [cleanEmail]
+    );
+
+    if (studentResult.rows.length > 0) {
+      const student = studentResult.rows[0];
+
+      if (student.status && student.status.toLowerCase() === 'inactive') {
+        return res.status(403).json({ success: false, message: 'This student account is inactive. Please contact the registrar office.' });
+      }
+
+      const storedPass = student.password || 'admin123';
+      if (!verifyPassword(password, storedPass)) {
+        return res.status(401).json({ success: false, message: 'Invalid email/enrollment number or password.' });
+      }
+
+      if (!student.password || (!student.password.startsWith('$2a$') && !student.password.startsWith('$2b$'))) {
+        try {
+          const upgradedHash = hashPassword(password);
+          await db.query('UPDATE students SET password = $1 WHERE id = $2', [upgradedHash, student.id]);
+        } catch (upgradeErr) {
+          console.warn('Could not upgrade student password hash:', upgradeErr.message);
+        }
+      }
+
+      const safeStudentUser = {
+        id: student.id,
+        enrollment_no: student.enrollment_no,
+        name: student.name,
+        email: student.email,
+        role: 'student',
+        current_semester: student.current_semester,
+        department_id: student.department_id,
+        department_name: student.department_name,
+        department_code: student.department_code,
+        program_id: student.program_id,
+        program_name: student.program_name,
+        avatar_url: student.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+      };
+
+      const token = generateToken({
+        id: student.id,
+        enrollment_no: student.enrollment_no,
+        email: student.email,
+        role: 'student',
+        department_id: student.department_id
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: `Welcome ${student.name} (Student)`,
+        token,
+        user: safeStudentUser
+      });
+    }
+
+    return res.status(401).json({ success: false, message: 'Invalid credentials. Please verify your email or enrollment number.' });
   } catch (err) {
     console.error('Login error:', err);
     return res.status(500).json({ success: false, message: 'Server error during authentication' });
@@ -185,6 +247,19 @@ exports.changePassword = async (req, res) => {
 
       const hashedNewPassword = hashPassword(newPassword);
       await db.query('UPDATE faculty SET password = $1 WHERE id = $2', [hashedNewPassword, facultyRes.rows[0].id]);
+      return res.status(200).json({ success: true, message: 'Password updated successfully.' });
+    }
+
+    // 3. Check in students table
+    const studentRes = await db.query('SELECT id, password FROM students WHERE LOWER(email) = $1', [cleanEmail]);
+    if (studentRes.rows.length > 0) {
+      const storedPass = studentRes.rows[0].password || 'admin123';
+      if (!verifyPassword(currentPassword, storedPass)) {
+        return res.status(400).json({ success: false, message: 'Current password is incorrect.' });
+      }
+
+      const hashedNewPassword = hashPassword(newPassword);
+      await db.query('UPDATE students SET password = $1 WHERE id = $2', [hashedNewPassword, studentRes.rows[0].id]);
       return res.status(200).json({ success: true, message: 'Password updated successfully.' });
     }
 

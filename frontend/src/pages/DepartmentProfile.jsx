@@ -94,7 +94,7 @@ export default function DepartmentProfile({
         'Is Current HOD': f.id === department.hod_id ? 'Yes' : 'No',
         'Status': f.status || 'Active'
       }));
-      exportToExcel(exportData, `NUV_${department.department_code}_Faculty_Roster`, 'Faculty Roster');
+      exportToExcel(exportData, `LJU_${department.department_code}_Faculty_Roster`, 'Faculty Roster');
     } else {
       const exportData = (department.programs || []).map(p => ({
         'ID': p.id,
@@ -106,7 +106,7 @@ export default function DepartmentProfile({
         'Duration (Years)': p.duration_years || 0,
         'Status': p.status || 'Active'
       }));
-      exportToExcel(exportData, `NUV_${department.department_code}_Programs`, 'Programs');
+      exportToExcel(exportData, `LJU_${department.department_code}_Programs`, 'Programs');
     }
   };
 

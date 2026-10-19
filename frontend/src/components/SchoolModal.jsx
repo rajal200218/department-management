@@ -139,7 +139,7 @@ export default function SchoolModal({
                   type="text"
                   maxLength={50}
                   className="form-control"
-                  placeholder="NUV-SET"
+                  placeholder="LJU-SET"
                   value={formData.school_code}
                   onChange={(e) => setFormData({ ...formData, school_code: e.target.value.toUpperCase() })}
                 />

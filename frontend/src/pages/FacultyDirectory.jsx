@@ -72,7 +72,7 @@ export default function FacultyDirectory({
       'Is HOD': f.is_current_hod ? 'Yes' : 'No',
       'Status': f.status || 'Active'
     }));
-    exportToExcel(exportData, 'NUV_Faculty_Roster', 'Faculty Roster');
+    exportToExcel(exportData, 'LJU_Faculty_Roster', 'Faculty Roster');
   };
 
   const departmentOptions = departments.map(d => ({

@@ -182,5 +182,186 @@ export const api = {
   }),
   deleteProgram: (id) => request(`/programs/${id}`, {
     method: 'DELETE'
+  }),
+
+  // Students CRUD & Academic Profile
+  getStudents: (params = {}) => {
+    const cleanParams = { ...params };
+    Object.keys(cleanParams).forEach(k => {
+      if (cleanParams[k] === null || cleanParams[k] === undefined || cleanParams[k] === '') {
+        delete cleanParams[k];
+      }
+    });
+    const queryStr = new URLSearchParams(cleanParams).toString();
+    return request(`/students${queryStr ? `?${queryStr}` : ''}`);
+  },
+  getStudentById: (id) => request(`/students/${id}`),
+  createStudent: (data) => request('/students', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  updateStudent: (id, data) => request(`/students/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  }),
+  deleteStudent: (id) => request(`/students/${id}`, {
+    method: 'DELETE'
+  }),
+
+  // Subjects & Courses CRUD
+  getSubjects: (params = {}) => {
+    const cleanParams = { ...params };
+    Object.keys(cleanParams).forEach(k => {
+      if (cleanParams[k] === null || cleanParams[k] === undefined || cleanParams[k] === '') {
+        delete cleanParams[k];
+      }
+    });
+    const queryStr = new URLSearchParams(cleanParams).toString();
+    return request(`/subjects${queryStr ? `?${queryStr}` : ''}`);
+  },
+  getSubjectById: (id) => request(`/subjects/${id}`),
+  createSubject: (data) => request('/subjects', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  updateSubject: (id, data) => request(`/subjects/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  }),
+  deleteSubject: (id) => request(`/subjects/${id}`, {
+    method: 'DELETE'
+  }),
+
+  // Attendance Management
+  getAttendance: (params = {}) => {
+    const cleanParams = { ...params };
+    Object.keys(cleanParams).forEach(k => {
+      if (cleanParams[k] === null || cleanParams[k] === undefined || cleanParams[k] === '') {
+        delete cleanParams[k];
+      }
+    });
+    const queryStr = new URLSearchParams(cleanParams).toString();
+    return request(`/attendance${queryStr ? `?${queryStr}` : ''}`);
+  },
+  markAttendance: (data) => request('/attendance/mark', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  getAttendanceReport: (params = {}) => {
+    const cleanParams = { ...params };
+    Object.keys(cleanParams).forEach(k => {
+      if (cleanParams[k] === null || cleanParams[k] === undefined || cleanParams[k] === '') {
+        delete cleanParams[k];
+      }
+    });
+    const queryStr = new URLSearchParams(cleanParams).toString();
+    return request(`/attendance/report${queryStr ? `?${queryStr}` : ''}`);
+  },
+
+  // Timetables Management
+  getTimetables: (params = {}) => {
+    const cleanParams = { ...params };
+    Object.keys(cleanParams).forEach(k => {
+      if (cleanParams[k] === null || cleanParams[k] === undefined || cleanParams[k] === '') {
+        delete cleanParams[k];
+      }
+    });
+    const queryStr = new URLSearchParams(cleanParams).toString();
+    return request(`/timetables${queryStr ? `?${queryStr}` : ''}`);
+  },
+  createTimetable: (data) => request('/timetables', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  updateTimetable: (id, data) => request(`/timetables/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  }),
+  deleteTimetable: (id) => request(`/timetables/${id}`, {
+    method: 'DELETE'
+  }),
+
+  // Notices & Announcements
+  getNotices: (params = {}) => {
+    const cleanParams = { ...params };
+    Object.keys(cleanParams).forEach(k => {
+      if (cleanParams[k] === null || cleanParams[k] === undefined || cleanParams[k] === '') {
+        delete cleanParams[k];
+      }
+    });
+    const queryStr = new URLSearchParams(cleanParams).toString();
+    return request(`/notices${queryStr ? `?${queryStr}` : ''}`);
+  },
+  createNotice: (data) => request('/notices', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  updateNotice: (id, data) => request(`/notices/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  }),
+  deleteNotice: (id) => request(`/notices/${id}`, {
+    method: 'DELETE'
+  }),
+
+  // Examinations & Results
+  getExams: (params = {}) => {
+    const cleanParams = { ...params };
+    Object.keys(cleanParams).forEach(k => {
+      if (cleanParams[k] === null || cleanParams[k] === undefined || cleanParams[k] === '') {
+        delete cleanParams[k];
+      }
+    });
+    const queryStr = new URLSearchParams(cleanParams).toString();
+    return request(`/exams${queryStr ? `?${queryStr}` : ''}`);
+  },
+  getExamById: (id) => request(`/exams/${id}`),
+  createExam: (data) => request('/exams', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  updateExam: (id, data) => request(`/exams/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  }),
+  deleteExam: (id) => request(`/exams/${id}`, {
+    method: 'DELETE'
+  }),
+  saveExamResults: (examId, data) => request(`/exams/${examId}/results`, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  getMyExamResults: () => request('/exams/student/my-results'),
+
+  // Assignments & Submissions
+  getAssignments: (params = {}) => {
+    const cleanParams = { ...params };
+    Object.keys(cleanParams).forEach(k => {
+      if (cleanParams[k] === null || cleanParams[k] === undefined || cleanParams[k] === '') {
+        delete cleanParams[k];
+      }
+    });
+    const queryStr = new URLSearchParams(cleanParams).toString();
+    return request(`/assignments${queryStr ? `?${queryStr}` : ''}`);
+  },
+  getAssignmentById: (id) => request(`/assignments/${id}`),
+  createAssignment: (data) => request('/assignments', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  updateAssignment: (id, data) => request(`/assignments/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  }),
+  deleteAssignment: (id) => request(`/assignments/${id}`, {
+    method: 'DELETE'
+  }),
+  submitAssignment: (id, data) => request(`/assignments/${id}/submit`, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  gradeSubmission: (submissionId, data) => request(`/assignments/submissions/${submissionId}/grade`, {
+    method: 'POST',
+    body: JSON.stringify(data)
   })
 };

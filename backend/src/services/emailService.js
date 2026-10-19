@@ -15,7 +15,7 @@ function isSmtpConfigured() {
  * Send password reset email with 6-digit OTP and recovery token
  */
 async function sendPasswordResetEmail({ toEmail, recipientName, otpCode, resetToken, expiresMinutes = 15 }) {
-  const fromAddress = process.env.SMTP_FROM || 'LJ University ERP <no-reply@nuv.ac.in>';
+  const fromAddress = process.env.SMTP_FROM || 'LJ University ERP <no-reply@ljku.edu.in>';
   const subject = `[LJ University ERP] Password Reset Verification Code: ${otpCode}`;
 
   const htmlContent = `

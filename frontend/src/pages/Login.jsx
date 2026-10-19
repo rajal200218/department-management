@@ -249,12 +249,12 @@ export default function Login({ onLoginSuccess }) {
               <div className="form-group" style={{ marginBottom: '1.25rem' }}>
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.4rem' }}>
                   <Mail size={14} color="#94A3B8" />
-                  <span>Institutional Email Address</span>
+                  <span>Institutional Email or Enrollment Number</span>
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   className="form-control"
-                  placeholder="e.g. name@nuv.ac.in"
+                  placeholder="e.g. admin@nuv.ac.in or LJU2024CS001"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -359,6 +359,111 @@ export default function Login({ onLoginSuccess }) {
                   </>
                 )}
               </button>
+
+              {/* Quick Demo Fill Buttons */}
+              <div style={{
+                marginTop: '1.5rem',
+                paddingTop: '1.25rem',
+                borderTop: '1px solid rgba(255, 255, 255, 0.08)'
+              }}>
+                <div style={{
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  color: '#64748B',
+                  marginBottom: '0.75rem',
+                  textAlign: 'center'
+                }}>
+                  Quick Fill Test Accounts
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmail('admin@nuv.ac.in');
+                      setPassword('admin123');
+                    }}
+                    style={{
+                      padding: '0.45rem 0.65rem',
+                      borderRadius: '8px',
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      border: '1px solid rgba(59, 130, 246, 0.25)',
+                      color: '#93C5FD',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    Admin Account
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmail('rajesh.patel@nuv.ac.in');
+                      setPassword('admin123');
+                    }}
+                    style={{
+                      padding: '0.45rem 0.65rem',
+                      borderRadius: '8px',
+                      background: 'rgba(139, 92, 246, 0.1)',
+                      border: '1px solid rgba(139, 92, 246, 0.25)',
+                      color: '#C4B5FD',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    HOD (CSE)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmail('priya.shah@nuv.ac.in');
+                      setPassword('admin123');
+                    }}
+                    style={{
+                      padding: '0.45rem 0.65rem',
+                      borderRadius: '8px',
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      border: '1px solid rgba(16, 185, 129, 0.25)',
+                      color: '#6EE7B7',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    Faculty Member
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmail('LJU2024CS001');
+                      setPassword('admin123');
+                    }}
+                    style={{
+                      padding: '0.45rem 0.65rem',
+                      borderRadius: '8px',
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      border: '1px solid rgba(245, 158, 11, 0.25)',
+                      color: '#FCD34D',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    Student (LJU2024CS001)
+                  </button>
+                </div>
+              </div>
             </form>
           </div>
         )}

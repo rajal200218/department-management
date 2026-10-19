@@ -10,6 +10,7 @@ function normalizeRole(role) {
   if (lower === 'admin' || lower === 'administrator') return 'admin';
   if (lower === 'dean') return 'dean';
   if (lower.includes('hod') || lower === 'head of department') return 'hod';
+  if (lower === 'student') return 'student';
   return 'faculty'; // Professor, Associate Professor, Assistant Professor, Lecturer, etc.
 }
 
@@ -117,7 +118,51 @@ async function authenticate(req, res, next) {
         isAdmin: false,
         isDean: false,
         isHOD: isHodRole,
-        isFaculty: !isHodRole
+        isFaculty: !isHodRole,
+        isStudent: false
+      };
+      return next();
+    }
+
+    // 4. Query `students` table in PostgreSQL
+    const studentRes = await db.query(
+      `SELECT s.id, s.enrollment_no, s.name, s.email, s.phone, s.gender, s.current_semester,
+              s.department_id, s.program_id, s.status, s.avatar_url,
+              d.department_name, d.department_code,
+              p.program_name, p.program_code
+       FROM students s
+       LEFT JOIN departments d ON s.department_id = d.id
+       LEFT JOIN programs p ON s.program_id = p.id
+       WHERE LOWER(s.email) = $1 OR LOWER(s.enrollment_no) = $1`,
+      [cleanEmail]
+    );
+
+    if (studentRes.rows.length > 0) {
+      const s = studentRes.rows[0];
+      if (s.status && s.status.toLowerCase() === 'inactive') {
+        req.user = null;
+        return next();
+      }
+
+      req.user = {
+        id: s.id,
+        enrollment_no: s.enrollment_no,
+        name: s.name,
+        email: s.email,
+        rawRole: 'Student',
+        role: 'student',
+        current_semester: s.current_semester,
+        department_id: s.department_id,
+        department_name: s.department_name,
+        department_code: s.department_code,
+        program_id: s.program_id,
+        program_name: s.program_name,
+        avatar_url: s.avatar_url,
+        isAdmin: false,
+        isDean: false,
+        isHOD: false,
+        isFaculty: false,
+        isStudent: true
       };
       return next();
     }
@@ -130,6 +175,25 @@ async function authenticate(req, res, next) {
     req.user = null;
     next();
   }
+}
+
+/**
+ * RBAC Guard: Requires Faculty, HOD, Dean, or Admin
+ */
+function requireFacultyOrAbove(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({
+      success: false,
+      message: 'Authentication required. Please sign in.'
+    });
+  }
+  if (req.user.isAdmin || req.user.isDean || req.user.isHOD || req.user.isFaculty) {
+    return next();
+  }
+  return res.status(403).json({
+    success: false,
+    message: 'Access Forbidden: Faculty or Administrative privileges are required for this action.'
+  });
 }
 
 /**
@@ -221,5 +285,6 @@ module.exports = {
   requireAdmin,
   requireAdminOrDean,
   requireAdminOrHOD,
+  requireFacultyOrAbove,
   normalizeRole
 };

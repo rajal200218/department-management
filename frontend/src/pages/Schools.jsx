@@ -35,7 +35,7 @@ export default function Schools({
       'Departments Count': s.department_count || 0,
       'Status': s.status || 'Active'
     }));
-    exportToExcel(exportData, 'NUV_Schools_Institutes', 'Schools');
+    exportToExcel(exportData, 'LJU_Schools_Institutes', 'Schools');
   };
 
   return (

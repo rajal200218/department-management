@@ -11,6 +11,13 @@ const facultyRoutes = require('./routes/facultyRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const programRoutes = require('./routes/programRoutes');
 const sessionRoutes = require('./routes/sessionRoutes');
+const studentRoutes = require('./routes/studentRoutes');
+const subjectRoutes = require('./routes/subjectRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
+const timetableRoutes = require('./routes/timetableRoutes');
+const noticeRoutes = require('./routes/noticeRoutes');
+const examRoutes = require('./routes/examRoutes');
+const assignmentRoutes = require('./routes/assignmentRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -42,6 +49,13 @@ app.use('/api/faculty', facultyRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/programs', programRoutes);
 app.use('/api/sessions', sessionRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/subjects', subjectRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/timetables', timetableRoutes);
+app.use('/api/notices', noticeRoutes);
+app.use('/api/exams', examRoutes);
+app.use('/api/assignments', assignmentRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

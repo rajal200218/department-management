@@ -74,7 +74,7 @@ export default function Programs({
       'Duration (Years)': p.duration_years || 0,
       'Status': p.status || 'Active'
     }));
-    exportToExcel(exportData, 'NUV_Academic_Programs', 'Academic Programs');
+    exportToExcel(exportData, 'LJU_Academic_Programs', 'Academic Programs');
   };
 
   const departmentOptions = departments.map(d => ({

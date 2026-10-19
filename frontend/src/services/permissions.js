@@ -8,6 +8,7 @@ export function normalizeRole(role) {
   if (lower === 'admin') return 'admin';
   if (lower === 'dean') return 'dean';
   if (lower.includes('hod') || lower === 'head of department') return 'hod';
+  if (lower === 'student') return 'student';
   return 'faculty';
 }
 
@@ -26,6 +27,10 @@ export function isHOD(user) {
 export function isFaculty(user) {
   const r = normalizeRole(user?.role);
   return r === 'faculty' && !isHOD(user);
+}
+
+export function isStudent(user) {
+  return normalizeRole(user?.role) === 'student' || Boolean(user?.isStudent);
 }
 
 export function canAddDepartment(user) {
@@ -91,6 +96,34 @@ export function canDeleteProgram(user, prog) {
   if (isAdmin(user)) return true;
   if (isHOD(user) && user?.department_id === prog?.department_id) return true;
   return false;
+}
+
+export function canManageStudents(user) {
+  return isAdmin(user) || isDean(user) || isHOD(user);
+}
+
+export function canManageSubjects(user) {
+  return isAdmin(user) || isDean(user) || isHOD(user);
+}
+
+export function canMarkAttendance(user) {
+  return isAdmin(user) || isDean(user) || isHOD(user) || isFaculty(user);
+}
+
+export function canManageTimetables(user) {
+  return isAdmin(user) || isDean(user) || isHOD(user);
+}
+
+export function canManageNotices(user) {
+  return isAdmin(user) || isDean(user) || isHOD(user) || isFaculty(user);
+}
+
+export function canManageExams(user) {
+  return isAdmin(user) || isDean(user) || isHOD(user) || isFaculty(user);
+}
+
+export function canManageAssignments(user) {
+  return isAdmin(user) || isDean(user) || isHOD(user) || isFaculty(user);
 }
 
 export function canAccessLiveSql(user) {

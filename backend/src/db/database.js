@@ -137,6 +137,122 @@ async function initDatabase() {
           CREATE INDEX IF NOT EXISTS idx_password_resets_email ON password_resets(email);
           CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(reset_token);
         `);
+
+        // Ensure DMS tables exist
+        await client.query(`
+          CREATE TABLE IF NOT EXISTS students (
+            id SERIAL PRIMARY KEY,
+            enrollment_no VARCHAR(50) UNIQUE NOT NULL,
+            name VARCHAR(150) NOT NULL,
+            email VARCHAR(150) UNIQUE NOT NULL,
+            password VARCHAR(255) DEFAULT 'admin123',
+            phone VARCHAR(50),
+            gender VARCHAR(20),
+            dob DATE,
+            address TEXT,
+            admission_year INTEGER DEFAULT 2024,
+            current_semester INTEGER DEFAULT 1,
+            department_id INTEGER REFERENCES departments(id) ON DELETE CASCADE,
+            program_id INTEGER REFERENCES programs(id) ON DELETE SET NULL,
+            avatar_url VARCHAR(255),
+            status VARCHAR(20) DEFAULT 'Active',
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE TABLE IF NOT EXISTS subjects (
+            id SERIAL PRIMARY KEY,
+            subject_name VARCHAR(150) NOT NULL,
+            subject_code VARCHAR(50) UNIQUE NOT NULL,
+            department_id INTEGER REFERENCES departments(id) ON DELETE CASCADE,
+            program_id INTEGER REFERENCES programs(id) ON DELETE SET NULL,
+            semester INTEGER NOT NULL DEFAULT 1,
+            credits INTEGER NOT NULL DEFAULT 3,
+            type VARCHAR(50) DEFAULT 'Theory',
+            faculty_id INTEGER REFERENCES faculty(id) ON DELETE SET NULL,
+            description TEXT,
+            status VARCHAR(20) DEFAULT 'Active',
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE TABLE IF NOT EXISTS attendance (
+            id SERIAL PRIMARY KEY,
+            student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+            subject_id INTEGER REFERENCES subjects(id) ON DELETE CASCADE,
+            date DATE NOT NULL,
+            status VARCHAR(20) NOT NULL DEFAULT 'Present',
+            marked_by INTEGER REFERENCES faculty(id) ON DELETE SET NULL,
+            remarks VARCHAR(255),
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT uq_student_subject_date UNIQUE(student_id, subject_id, date)
+          );
+          CREATE TABLE IF NOT EXISTS timetables (
+            id SERIAL PRIMARY KEY,
+            department_id INTEGER REFERENCES departments(id) ON DELETE CASCADE,
+            program_id INTEGER REFERENCES programs(id) ON DELETE SET NULL,
+            semester INTEGER NOT NULL,
+            day_of_week VARCHAR(20) NOT NULL,
+            time_slot VARCHAR(50) NOT NULL,
+            subject_id INTEGER REFERENCES subjects(id) ON DELETE CASCADE,
+            faculty_id INTEGER REFERENCES faculty(id) ON DELETE SET NULL,
+            classroom VARCHAR(50) NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE TABLE IF NOT EXISTS notices (
+            id SERIAL PRIMARY KEY,
+            title VARCHAR(200) NOT NULL,
+            category VARCHAR(50) DEFAULT 'General',
+            target_role VARCHAR(50) DEFAULT 'All',
+            department_id INTEGER REFERENCES departments(id) ON DELETE CASCADE,
+            content TEXT NOT NULL,
+            publish_date DATE DEFAULT CURRENT_DATE,
+            priority VARCHAR(20) DEFAULT 'Normal',
+            posted_by VARCHAR(100),
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE TABLE IF NOT EXISTS exams (
+            id SERIAL PRIMARY KEY,
+            exam_name VARCHAR(150) NOT NULL,
+            subject_id INTEGER REFERENCES subjects(id) ON DELETE CASCADE,
+            exam_date DATE NOT NULL,
+            time_slot VARCHAR(50) NOT NULL,
+            classroom VARCHAR(50),
+            max_marks INTEGER DEFAULT 100,
+            passing_marks INTEGER DEFAULT 40,
+            status VARCHAR(20) DEFAULT 'Scheduled',
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE TABLE IF NOT EXISTS exam_results (
+            id SERIAL PRIMARY KEY,
+            exam_id INTEGER REFERENCES exams(id) ON DELETE CASCADE,
+            student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+            marks_obtained NUMERIC(5, 2) NOT NULL,
+            grade VARCHAR(10),
+            remarks VARCHAR(255),
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT uq_exam_student UNIQUE(exam_id, student_id)
+          );
+          CREATE TABLE IF NOT EXISTS assignments (
+            id SERIAL PRIMARY KEY,
+            title VARCHAR(200) NOT NULL,
+            subject_id INTEGER REFERENCES subjects(id) ON DELETE CASCADE,
+            department_id INTEGER REFERENCES departments(id) ON DELETE CASCADE,
+            semester INTEGER NOT NULL DEFAULT 1,
+            description TEXT,
+            due_date DATE NOT NULL,
+            max_marks INTEGER DEFAULT 50,
+            created_by INTEGER REFERENCES faculty(id) ON DELETE SET NULL,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+          CREATE TABLE IF NOT EXISTS assignment_submissions (
+            id SERIAL PRIMARY KEY,
+            assignment_id INTEGER REFERENCES assignments(id) ON DELETE CASCADE,
+            student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+            submission_content TEXT,
+            submitted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            status VARCHAR(20) DEFAULT 'Submitted',
+            marks_obtained NUMERIC(5, 2),
+            feedback TEXT,
+            CONSTRAINT uq_assignment_student UNIQUE(assignment_id, student_id)
+          );
+        `);
       }
     } catch (syncErr) {
       console.warn('Database schema sync notice:', syncErr.message);

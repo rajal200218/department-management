@@ -101,7 +101,7 @@ export default function Departments({
       'Status': d.status
     }));
 
-    exportToExcel(exportData, 'NUV_Departments', 'Departments');
+    exportToExcel(exportData, 'LJU_Departments', 'Departments');
   };
 
   const schoolOptions = schools.map(s => ({

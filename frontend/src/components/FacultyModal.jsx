@@ -198,7 +198,7 @@ export default function FacultyModal({
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
                   <Key size={14} color="#60A5FA" />
                   <span>{isEdit ? 'Update Login Password' : 'Set Login Password'}</span>
-                  {!isEdit && <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>(Optional - default: nuv@{new Date().getFullYear()})</span>}
+                  {!isEdit && <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>(Optional - default: lju@{new Date().getFullYear()})</span>}
                 </label>
 
                 <button

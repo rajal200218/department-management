@@ -9,6 +9,9 @@ import ProgramModal from './components/ProgramModal';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import AcademicSessionModal from './components/AcademicSessionModal';
 import ChangePasswordModal from './components/ChangePasswordModal';
+import StudentModal from './components/StudentModal';
+import StudentProfileModal from './components/StudentProfileModal';
+import SubjectModal from './components/SubjectModal';
 
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -17,6 +20,13 @@ import DepartmentProfile from './pages/DepartmentProfile';
 import FacultyDirectory from './pages/FacultyDirectory';
 import Schools from './pages/Schools';
 import Programs from './pages/Programs';
+import Students from './pages/Students';
+import Subjects from './pages/Subjects';
+import Attendance from './pages/Attendance';
+import Timetable from './pages/Timetable';
+import Notices from './pages/Notices';
+import Examinations from './pages/Examinations';
+import Assignments from './pages/Assignments';
 
 import { api } from './services/api';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
@@ -63,10 +73,20 @@ export default function App() {
   const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
   const [editingProgram, setEditingProgram] = useState(null);
 
+  // Student Modal State
+  const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [isStudentProfileOpen, setIsStudentProfileOpen] = useState(false);
+  const [selectedStudentForProfile, setSelectedStudentForProfile] = useState(null);
+
+  // Subject Modal State
+  const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
+  const [editingSubject, setEditingSubject] = useState(null);
+
   // Delete Modal State
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
-    type: 'department', // 'department', 'faculty', 'school', 'program'
+    type: 'department', // 'department', 'faculty', 'school', 'program', 'student', 'subject'
     item: null,
     isDeleting: false
   });
@@ -372,6 +392,93 @@ export default function App() {
     });
   };
 
+  // Student Handlers
+  const handleOpenAddStudent = () => {
+    setEditingStudent(null);
+    setIsStudentModalOpen(true);
+  };
+
+  const handleOpenEditStudent = (student) => {
+    setEditingStudent(student);
+    setIsStudentModalOpen(true);
+  };
+
+  const handleOpenStudentProfile = (student) => {
+    setSelectedStudentForProfile(student);
+    setIsStudentProfileOpen(true);
+  };
+
+  const handleSaveStudent = async (formData) => {
+    try {
+      if (editingStudent) {
+        const res = await api.updateStudent(editingStudent.id, formData);
+        if (res.success) {
+          showToast(`Student '${formData.name}' updated successfully.`);
+          fetchData();
+        }
+      } else {
+        const res = await api.createStudent(formData);
+        if (res.success) {
+          showToast(`Student '${formData.name}' enrolled successfully.`);
+          fetchData();
+        }
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to save student', 'error');
+      throw err;
+    }
+  };
+
+  const handleTriggerDeleteStudent = (student) => {
+    setDeleteModal({
+      isOpen: true,
+      type: 'student',
+      item: student,
+      isDeleting: false
+    });
+  };
+
+  // Subject Handlers
+  const handleOpenAddSubject = () => {
+    setEditingSubject(null);
+    setIsSubjectModalOpen(true);
+  };
+
+  const handleOpenEditSubject = (subj) => {
+    setEditingSubject(subj);
+    setIsSubjectModalOpen(true);
+  };
+
+  const handleSaveSubject = async (formData) => {
+    try {
+      if (editingSubject) {
+        const res = await api.updateSubject(editingSubject.id, formData);
+        if (res.success) {
+          showToast(`Course '${formData.subject_name}' updated.`);
+          fetchData();
+        }
+      } else {
+        const res = await api.createSubject(formData);
+        if (res.success) {
+          showToast(`Course '${formData.subject_name}' created.`);
+          fetchData();
+        }
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to save subject', 'error');
+      throw err;
+    }
+  };
+
+  const handleTriggerDeleteSubject = (subj) => {
+    setDeleteModal({
+      isOpen: true,
+      type: 'subject',
+      item: subj,
+      isDeleting: false
+    });
+  };
+
   // Academic Session Handlers
   const handleSelectSession = (sessionName) => {
     setActiveSession(sessionName);
@@ -443,6 +550,18 @@ export default function App() {
         const res = await api.deleteProgram(deleteModal.item.id);
         if (res.success) {
           showToast(`Program '${deleteModal.item.program_name}' deleted.`);
+          fetchData();
+        }
+      } else if (deleteModal.type === 'student') {
+        const res = await api.deleteStudent(deleteModal.item.id);
+        if (res.success) {
+          showToast(`Student record '${deleteModal.item.name}' deleted.`);
+          fetchData();
+        }
+      } else if (deleteModal.type === 'subject') {
+        const res = await api.deleteSubject(deleteModal.item.id);
+        if (res.success) {
+          showToast(`Subject '${deleteModal.item.subject_name}' deleted.`);
           fetchData();
         }
       }
@@ -632,6 +751,66 @@ export default function App() {
             activeSession={activeSession}
           />
         )}
+
+        {currentView === 'students' && (
+          <Students
+            user={user}
+            departments={departments}
+            programs={programsList}
+            onOpenAddModal={handleOpenAddStudent}
+            onOpenEditModal={handleOpenEditStudent}
+            onOpenDeleteModal={handleTriggerDeleteStudent}
+            onOpenProfileModal={handleOpenStudentProfile}
+          />
+        )}
+
+        {currentView === 'subjects' && (
+          <Subjects
+            user={user}
+            departments={departments}
+            programs={programsList}
+            faculty={facultyList}
+            onOpenAddModal={handleOpenAddSubject}
+            onOpenEditModal={handleOpenEditSubject}
+            onOpenDeleteModal={handleTriggerDeleteSubject}
+          />
+        )}
+
+        {currentView === 'attendance' && (
+          <Attendance
+            user={user}
+            departments={departments}
+          />
+        )}
+
+        {currentView === 'timetables' && (
+          <Timetable
+            user={user}
+            departments={departments}
+            facultyList={facultyList}
+          />
+        )}
+
+        {currentView === 'exams' && (
+          <Examinations
+            user={user}
+            departments={departments}
+          />
+        )}
+
+        {currentView === 'assignments' && (
+          <Assignments
+            user={user}
+            departments={departments}
+          />
+        )}
+
+        {currentView === 'notices' && (
+          <Notices
+            user={user}
+            departments={departments}
+          />
+        )}
       </div>
 
       {/* Live SQL Inspection Drawer */}
@@ -675,6 +854,33 @@ export default function App() {
         departments={departments}
       />
 
+      {/* Student Modals */}
+      <StudentModal
+        isOpen={isStudentModalOpen}
+        onClose={() => setIsStudentModalOpen(false)}
+        onSave={handleSaveStudent}
+        student={editingStudent}
+        departments={departments}
+        programs={programsList}
+      />
+
+      <StudentProfileModal
+        isOpen={isStudentProfileOpen}
+        onClose={() => setIsStudentProfileOpen(false)}
+        studentId={selectedStudentForProfile?.id}
+      />
+
+      {/* Subject Modal */}
+      <SubjectModal
+        isOpen={isSubjectModalOpen}
+        onClose={() => setIsSubjectModalOpen(false)}
+        onSave={handleSaveSubject}
+        subject={editingSubject}
+        departments={departments}
+        programs={programsList}
+        faculty={facultyList}
+      />
+
       <DeleteConfirmModal
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, type: 'department', item: null, isDeleting: false })}
@@ -682,7 +888,9 @@ export default function App() {
         title={
           deleteModal.type === 'department' ? 'Delete Department' :
           deleteModal.type === 'faculty' ? 'Delete Faculty Member' :
-          deleteModal.type === 'school' ? 'Delete School' : 'Delete Academic Program'
+          deleteModal.type === 'school' ? 'Delete School' :
+          deleteModal.type === 'program' ? 'Delete Academic Program' :
+          deleteModal.type === 'student' ? 'Delete Student Record' : 'Delete Course / Subject'
         }
         message={
           deleteModal.type === 'department'
@@ -691,7 +899,11 @@ export default function App() {
             ? 'Are you sure you want to remove this faculty member from the academic roster?'
             : deleteModal.type === 'school'
             ? 'Are you sure you want to delete this school/institute?'
-            : 'Are you sure you want to delete this degree program?'
+            : deleteModal.type === 'program'
+            ? 'Are you sure you want to delete this degree program?'
+            : deleteModal.type === 'student'
+            ? 'Are you sure you want to permanently delete this student record? Associated attendance and marks will also be removed.'
+            : 'Are you sure you want to delete this subject/course from the curriculum?'
         }
         itemName={
           deleteModal.item
@@ -701,7 +913,11 @@ export default function App() {
               ? deleteModal.item.name
               : deleteModal.type === 'school'
               ? `${deleteModal.item.school_name} (${deleteModal.item.school_code})`
-              : `${deleteModal.item.program_name} (${deleteModal.item.program_code})`
+              : deleteModal.type === 'program'
+              ? `${deleteModal.item.program_name} (${deleteModal.item.program_code})`
+              : deleteModal.type === 'student'
+              ? `${deleteModal.item.name} (${deleteModal.item.enrollment_no})`
+              : `${deleteModal.item.subject_name} (${deleteModal.item.subject_code})`
             : ''
         }
         isDeleting={deleteModal.isDeleting}
