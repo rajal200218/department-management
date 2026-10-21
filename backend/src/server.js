@@ -90,7 +90,7 @@ async function startServer() {
 🏛️  LJ UNIVERSITY ERP - DEPARTMENT MANAGEMENT
 🚀  Backend Server running at: http://localhost:${PORT}
 📡  Health check: http://localhost:${PORT}/api/health
-📊  Database Engine: ${getDbMode()} (nuv_department_db)
+📊  Database Engine: ${getDbMode()} (${process.env.PGDATABASE || 'lj_department_db'})
 ✉️   Email Service (SMTP): ${smtpReady ? 'Active (Live Transporter)' : 'Development Mode (Console Fallback)'}
 ===========================================================
     `);

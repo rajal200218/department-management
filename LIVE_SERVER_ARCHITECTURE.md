@@ -23,7 +23,7 @@ The Department Management System is deployed across a decoupled 3-tier cloud inf
 | Tier | Component | Cloud Platform | Live Production URL |
 | :--- | :--- | :--- | :--- |
 | **Presentation Tier** | React 19 Frontend SPA | **Vercel** | [https://department-management-nsts7zbfi-rajal1.vercel.app](https://department-management-nsts7zbfi-rajal1.vercel.app) |
-| **Application Tier** | Node.js / Express API | **Render** | [https://nuv-department-api.onrender.com/api/health](https://nuv-department-api.onrender.com/api/health) |
+| **Application Tier** | Node.js / Express API | **Render** | [https://lj-department-api.onrender.com/api/health](https://lj-department-api.onrender.com/api/health) |
 | **Persistence Tier** | Serverless PostgreSQL 16 | **Neon** | `ep-holy-wave-b3fspyik-pooler...` (SSL Port 5432) |
 
 ---
@@ -86,9 +86,9 @@ sequenceDiagram
 | :--- | :--- | :--- |
 | **Frontend Location** | `http://localhost:5173` | `https://department-management...vercel.app` |
 | **Frontend Host** | Vite Development Server | **Vercel** Global Edge CDN |
-| **Backend Location** | `http://localhost:5000` | `https://nuv-department-api.onrender.com` |
+| **Backend Location** | `http://localhost:5000` | `https://lj-department-api.onrender.com` |
 | **Backend Host** | Local Node.js Process | **Render** Linux Cloud Container (Singapore) |
-| **Database Location** | `localhost:5432` (`nuv_department_db`) | **Neon** Cloud PostgreSQL (`neondb`) |
+| **Database Location** | `localhost:5432` (`lj_department_db`) | **Neon** Cloud PostgreSQL (`neondb`) |
 | **Database Connection**| Direct TCP (Plain / Unencrypted) | Encrypted SSL/TLS (`sslmode=require`) |
 | **Security Protocol** | HTTP | Full HTTPS / TLS 1.3 |
 | **Continuous Delivery**| Manual Terminal Restart | Automated on `git push origin main` |

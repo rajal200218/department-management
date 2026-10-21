@@ -326,7 +326,7 @@ ON CONFLICT (assignment_id, student_id) DO NOTHING;
 `;
 
 async function runDmsMigration() {
-  const dbName = process.env.PGDATABASE || 'nuv_department_db';
+  const dbName = process.env.PGDATABASE || 'lj_department_db';
   const user = process.env.PGUSER || 'postgres';
   const password = process.env.PGPASSWORD || 'postgres';
   const host = process.env.PGHOST || 'localhost';

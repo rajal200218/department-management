@@ -1,5 +1,5 @@
 {
-  "name": "nuv-department-backend",
+  "name": "lj-department-backend",
   "version": "1.0.0",
   "description": "Backend API for LJ University ERP Phase 2 Module 12 - Department Management",
   "main": "src/server.js",
@@ -20,7 +20,7 @@
     "erp",
     "department-management",
     "lj-university",
-    "nuv",
+    "lju",
     "express",
     "postgresql"
   ],

@@ -385,7 +385,7 @@ export default function Sidebar({ currentView, setCurrentView, user }) {
           </span>
         </div>
         <div style={{ fontSize: '0.7rem', color: '#64748B' }}>
-          Database: <span style={{ color: '#94A3B8' }}>nuv_department_db</span>
+          Database: <span style={{ color: '#94A3B8' }}>lj_department_db</span>
         </div>
       </div>
     </aside>

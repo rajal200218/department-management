@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
 const SALT_ROUNDS = 10;
-const TOKEN_SECRET = process.env.JWT_SECRET || process.env.SESSION_SECRET || 'nuv_erp_department_management_secure_key_2026';
+const TOKEN_SECRET = process.env.JWT_SECRET || process.env.SESSION_SECRET || 'lj_erp_department_management_secure_key_2026';
 const TOKEN_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 /**

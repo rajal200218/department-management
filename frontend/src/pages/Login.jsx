@@ -254,7 +254,7 @@ export default function Login({ onLoginSuccess }) {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="e.g. admin@nuv.ac.in or LJU2024CS001"
+                  placeholder="e.g. admin@ljku.edu.in or LJU2024CS001"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -381,7 +381,7 @@ export default function Login({ onLoginSuccess }) {
                   <button
                     type="button"
                     onClick={() => {
-                      setEmail('admin@nuv.ac.in');
+                      setEmail('admin@ljku.edu.in');
                       setPassword('admin123');
                     }}
                     style={{
@@ -402,7 +402,7 @@ export default function Login({ onLoginSuccess }) {
                   <button
                     type="button"
                     onClick={() => {
-                      setEmail('rajesh.patel@nuv.ac.in');
+                      setEmail('amit.patel@ljku.edu.in');
                       setPassword('admin123');
                     }}
                     style={{
@@ -423,7 +423,7 @@ export default function Login({ onLoginSuccess }) {
                   <button
                     type="button"
                     onClick={() => {
-                      setEmail('priya.shah@nuv.ac.in');
+                      setEmail('priya.joshi@ljku.edu.in');
                       setPassword('admin123');
                     }}
                     style={{
@@ -510,7 +510,7 @@ export default function Login({ onLoginSuccess }) {
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="e.g. name@nuv.ac.in"
+                  placeholder="e.g. name@ljku.edu.in"
                   value={recoveryEmail}
                   onChange={(e) => setRecoveryEmail(e.target.value)}
                   required

@@ -21,7 +21,7 @@ const getDbConfig = () => {
     password: process.env.PGPASSWORD || 'postgres',
     host: process.env.PGHOST || 'localhost',
     port: parseInt(process.env.PGPORT, 10) || 5432,
-    database: process.env.PGDATABASE || 'nuv_department_db',
+    database: process.env.PGDATABASE || 'lj_department_db',
     ssl: isSsl ? { rejectUnauthorized: false } : false,
     max: parseInt(process.env.PG_MAX_CONNECTIONS, 10) || 20,
     idleTimeoutMillis: 30000,

@@ -113,7 +113,7 @@ If you did not make this request, please ignore this message.
     console.log(`To enable real inbox delivery, configure the following in backend/.env:`);
     console.log(`  SMTP_HOST=smtp.gmail.com (or your SMTP server)`);
     console.log(`  SMTP_PORT=587`);
-    console.log(`  SMTP_USER=your-email@nuv.ac.in`);
+    console.log(`  SMTP_USER=your-email@ljku.edu.in`);
     console.log(`  SMTP_PASS=your-app-password`);
     console.log(`------------------------------------------------------`);
     console.log(`🔑 Generated Reset OTP for \x1b[36m${toEmail}\x1b[0m: \x1b[32m${otpCode}\x1b[0m`);

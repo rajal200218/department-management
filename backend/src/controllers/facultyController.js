@@ -169,7 +169,7 @@ exports.createFaculty = async (req, res) => {
     }
     if (!plainPass) {
       // Default initial password if none provided
-      plainPass = 'nuv@' + new Date().getFullYear();
+      plainPass = 'lju@' + new Date().getFullYear();
     }
     const hashedPassword = hashPassword(plainPass);
 

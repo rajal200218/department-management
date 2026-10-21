@@ -93,7 +93,7 @@ export default function App() {
 
   // Academic Sessions State
   const [sessions, setSessions] = useState(() => {
-    const saved = localStorage.getItem('nuv_academic_sessions');
+    const saved = localStorage.getItem('lju_academic_sessions');
     return saved ? JSON.parse(saved) : [
       { id: 's1', name: '2026–2027', status: 'Active', term: 'Fall & Spring (Full Year)', startDate: '2026-07-01', endDate: '2027-06-30' },
       { id: 's2', name: '2025–2026', status: 'Archived', term: 'Academic Year (Completed)', startDate: '2025-07-01', endDate: '2026-06-30' },
@@ -102,7 +102,7 @@ export default function App() {
     ];
   });
   const [activeSession, setActiveSession] = useState(() => {
-    return localStorage.getItem('nuv_active_session') || '2026–2027';
+    return localStorage.getItem('lju_active_session') || '2026–2027';
   });
   const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
 
@@ -120,8 +120,8 @@ export default function App() {
   // 1. Session Verification on Load / Refresh
   useEffect(() => {
     const verifyUserSession = async () => {
-      const token = localStorage.getItem('nuv_token');
-      const savedUser = localStorage.getItem('nuv_user');
+      const token = localStorage.getItem('lju_token');
+      const savedUser = localStorage.getItem('lju_user');
 
       if (!token || !savedUser) {
         setIsAuthenticated(false);
@@ -135,14 +135,14 @@ export default function App() {
         if (res?.success && res.user) {
           setUser(res.user);
           setIsAuthenticated(true);
-          localStorage.setItem('nuv_user', JSON.stringify(res.user));
+          localStorage.setItem('lju_user', JSON.stringify(res.user));
         } else {
           throw new Error('Invalid session response');
         }
       } catch (err) {
         console.warn('Session verification failed on refresh:', err.message);
-        localStorage.removeItem('nuv_token');
-        localStorage.removeItem('nuv_user');
+        localStorage.removeItem('lju_token');
+        localStorage.removeItem('lju_user');
         setUser(null);
         setIsAuthenticated(false);
       } finally {
@@ -159,8 +159,10 @@ export default function App() {
       showToast(e.detail || 'Session expired. Please sign in again.', 'error');
     };
 
-    window.addEventListener('nuv_auth_expired', handleAuthExpired);
-    return () => window.removeEventListener('nuv_auth_expired', handleAuthExpired);
+    window.addEventListener('lju_auth_expired', handleAuthExpired);
+    return () => {
+      window.removeEventListener('lju_auth_expired', handleAuthExpired);
+    };
   }, []);
 
   // Fetch all core data (session-aware from PostgreSQL)
@@ -213,8 +215,8 @@ export default function App() {
 
   // Auth Handlers
   const handleLoginSuccess = (userData, token) => {
-    localStorage.setItem('nuv_user', JSON.stringify(userData));
-    localStorage.setItem('nuv_token', token);
+    localStorage.setItem('lju_user', JSON.stringify(userData));
+    localStorage.setItem('lju_token', token);
     setUser(userData);
     setIsAuthenticated(true);
     setCurrentView('dashboard');
@@ -227,8 +229,8 @@ export default function App() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUser(null);
-    localStorage.removeItem('nuv_user');
-    localStorage.removeItem('nuv_token');
+    localStorage.removeItem('lju_user');
+    localStorage.removeItem('lju_token');
     showToast('Logged out successfully');
   };
 
@@ -482,7 +484,7 @@ export default function App() {
   // Academic Session Handlers
   const handleSelectSession = (sessionName) => {
     setActiveSession(sessionName);
-    localStorage.setItem('nuv_active_session', sessionName);
+    localStorage.setItem('lju_active_session', sessionName);
     showToast(`Active academic context switched to: Session ${sessionName}`);
     fetchData(sessionName);
   };
@@ -504,7 +506,7 @@ export default function App() {
     } catch (e) {
       const updated = [...sessions, newSession];
       setSessions(updated);
-      localStorage.setItem('nuv_academic_sessions', JSON.stringify(updated));
+      localStorage.setItem('lju_academic_sessions', JSON.stringify(updated));
       showToast(`Academic Session '${newSession.name}' added.`);
     }
   };

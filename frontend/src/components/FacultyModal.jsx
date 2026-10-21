@@ -178,7 +178,7 @@ export default function FacultyModal({
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="amit.patel@nuv.ac.in"
+                  placeholder="amit.patel@ljku.edu.in"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />

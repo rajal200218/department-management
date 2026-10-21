@@ -1,7 +1,7 @@
 -- =========================================================================
 -- LJ UNIVERSITY ERP - PHASE 2 MODULE 12: DEPARTMENT MANAGEMENT SYSTEM
 -- Database Schema (PostgreSQL)
--- Database Name: nuv_department_db
+-- Database Name: lj_department_db
 -- =========================================================================
 
 -- Drop tables if they already exist (in reverse order of foreign keys)

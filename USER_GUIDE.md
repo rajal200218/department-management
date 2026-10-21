@@ -86,7 +86,7 @@ graph TD
 ├───────────────────┼───────────────────────────────┼────────────────────────────────────┤
 │ Frontend (Vite)   │ http://localhost:5173         │ cd frontend && npm run dev         │
 │ Backend (Express) │ http://localhost:5000         │ cd backend && npm run dev          │
-│ Database (Postgres)│ localhost:5432 (nuv_department_db)│ pg_ctl / Docker / Windows Service│
+│ Database (Postgres)│ localhost:5432 (lj_department_db) │ pg_ctl / Docker / Windows Service│
 │ All-in-One Launch │ Launches both servers         │ .\start-all.bat                    │
 └───────────────────┴───────────────────────────────┴────────────────────────────────────┘
 
@@ -96,7 +96,7 @@ graph TD
 │ Service           │ Hosting Platform              │ Live URL Pattern                   │
 ├───────────────────┼───────────────────────────────┼────────────────────────────────────┤
 │ Frontend (Vite)   │ Vercel (Global Edge CDN)      │ https://your-project.vercel.app    │
-│ Backend (Express) │ Render (Web Service Container)│ https://nuv-department-api.onrender.com│
+│ Backend (Express) │ Render (Web Service Container)│ https://lj-department-api.onrender.com │
 │ Database (Postgres)│ Neon (Serverless PostgreSQL)  │ postgresql://neondb_owner:...      │
 └───────────────────┴───────────────────────────────┴────────────────────────────────────┘
 ```
@@ -109,7 +109,7 @@ graph TD
 department-management/
 ├── database/                        # PostgreSQL DDL & Data Initialization
 │   ├── schema.sql                   # Table definitions, constraints, indexes
-│   └── seed.sql                     # Realistic NUV university sample datasets
+│   └── seed.sql                     # Realistic LJ University sample datasets
 │
 ├── backend/                         # Express.js REST API Server
 │   ├── src/
@@ -313,11 +313,11 @@ The system implements strict **Role-Based Access Control** enforced both at the 
 
 | Role | Email Address | Password | Department Scoping |
 | :--- | :--- | :--- | :--- |
-| **System Admin** | `admin@nuv.ac.in` | `admin123` | Full University Access |
-| **Dean Academic** | `dean.academic@nuv.ac.in` | `admin123` | Full University Access |
-| **HOD (CSE Dept)** | `rajesh.sharma@nuv.ac.in` | `admin123` | Scoped to Computer Science & Engineering |
-| **HOD (Mech Dept)**| `vikram.rathod@nuv.ac.in` | `admin123` | Scoped to Mechanical Engineering |
-| **Faculty (CSE)** | `priya.desai@nuv.ac.in` | `admin123` | Read-only CSE Staff Member |
+| **System Admin** | `admin@ljku.edu.in` | `admin123` | Full University Access |
+| **Dean Academic** | `dean.academic@ljku.edu.in` | `admin123` | Full University Access |
+| **HOD (CSE Dept)** | `amit.patel@ljku.edu.in` | `admin123` | Scoped to Computer Science & Engineering |
+| **HOD (Mech Dept)**| `rajesh.trivedi@ljku.edu.in` | `admin123` | Scoped to Mechanical Engineering |
+| **Faculty (CSE)** | `priya.joshi@ljku.edu.in` | `admin123` | Read-only CSE Staff Member |
 
 ---
 
@@ -351,7 +351,7 @@ PGUSER=postgres
 PGPASSWORD=your_postgres_password
 PGHOST=localhost
 PGPORT=5432
-PGDATABASE=nuv_department_db
+PGDATABASE=lj_department_db
 PGSSL=false
 JWT_SECRET=your_development_jwt_secret_key_12345
 ```
@@ -398,7 +398,7 @@ npm run dev
 2. **Department Profile Page:** Clicking on any department card opens its deep profile page showing its assigned HOD, enrolled faculty, offered degree programs, building location, and contact information.
 3. **Excel Export Engine:** Clicking **Export to Excel** in any table downloads a cleanly formatted `.xlsx` workbook generated natively in the browser via SheetJS.
 4. **Password Recovery Flow:** If a user clicks **Forgot Password?** on the login screen:
-   * Enters their registered institutional email (`@nuv.ac.in`).
+   * Enters their registered institutional email (`@ljku.edu.in`).
    * A 6-digit cryptographic OTP is generated and emailed (or displayed in server logs in development mode).
    * Verifies the OTP and securely updates their password with Bcrypt hashing.
 

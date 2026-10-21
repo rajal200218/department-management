@@ -511,12 +511,12 @@ graph TD
             <tr>
               <td><strong>Backend API</strong></td>
               <td><code>http://localhost:5000</code></td>
-              <td><code>https://nuv-department-api.onrender.com</code></td>
+              <td><code>https://lj-department-api.onrender.com</code></td>
               <td>Node.js Express REST API server</td>
             </tr>
             <tr>
               <td><strong>Database</strong></td>
-              <td><code>localhost:5432 (nuv_department_db)</code></td>
+              <td><code>localhost:5432 (lj_department_db)</code></td>
               <td><code>Neon Serverless PostgreSQL Cloud</code></td>
               <td>Relational persistent data store</td>
             </tr>
@@ -531,7 +531,7 @@ graph TD
       <pre><code>department-management/
 ├── database/                        # PostgreSQL DDL & Seed Scripts
 │   ├── schema.sql                   # Relational tables, indexes, constraints
-│   └── seed.sql                     # Realistic NUV university sample datasets
+│   └── seed.sql                     # Realistic LJ University sample datasets
 ├── backend/                         # Express.js REST API Server
 │   ├── src/
 │   │   ├── controllers/             # Business logic (auth, dept, faculty, etc.)
@@ -703,25 +703,25 @@ erDiagram
           <tbody>
             <tr>
               <td><strong>System Admin</strong></td>
-              <td><code>admin@nuv.ac.in</code></td>
+              <td><code>admin@ljku.edu.in</code></td>
               <td><code>admin123</code></td>
               <td>Global Superadmin Access</td>
             </tr>
             <tr>
               <td><strong>Dean Academic</strong></td>
-              <td><code>dean.academic@nuv.ac.in</code></td>
+              <td><code>dean.academic@ljku.edu.in</code></td>
               <td><code>admin123</code></td>
               <td>University Academic Oversight</td>
             </tr>
             <tr>
               <td><strong>HOD (CSE Dept)</strong></td>
-              <td><code>rajesh.sharma@nuv.ac.in</code></td>
+              <td><code>amit.patel@ljku.edu.in</code></td>
               <td><code>admin123</code></td>
               <td>Computer Science & Engineering</td>
             </tr>
             <tr>
               <td><strong>Faculty Member</strong></td>
-              <td><code>priya.desai@nuv.ac.in</code></td>
+              <td><code>priya.joshi@ljku.edu.in</code></td>
               <td><code>admin123</code></td>
               <td>Read-Only Faculty Access</td>
             </tr>
@@ -743,7 +743,7 @@ erDiagram
       <pre><code># 1. Start Backend API Server
 cd backend
 npm install
-npm run seed       # Populates PostgreSQL with realistic NUV university records
+npm run seed       # Populates PostgreSQL with realistic LJ University records
 npm run dev        # Starts Express server at http://localhost:5000
 
 # 2. Start Frontend React App (in a separate terminal)

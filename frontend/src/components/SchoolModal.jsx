@@ -180,7 +180,7 @@ export default function SchoolModal({
                   type="email"
                   maxLength={150}
                   className="form-control"
-                  placeholder="dean.set@nuv.ac.in"
+                  placeholder="dean.set@ljku.edu.in"
                   value={formData.contact_email}
                   onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
                 />

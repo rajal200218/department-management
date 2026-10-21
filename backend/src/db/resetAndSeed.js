@@ -4,7 +4,7 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
 async function resetAndSeedDatabase() {
-  const dbName = process.env.PGDATABASE || 'nuv_department_db';
+  const dbName = process.env.PGDATABASE || 'lj_department_db';
   const user = process.env.PGUSER || 'postgres';
   const password = process.env.PGPASSWORD || 'postgres';
   const host = process.env.PGHOST || 'localhost';

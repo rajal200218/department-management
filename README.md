@@ -13,7 +13,7 @@ A high-performance, enterprise-grade academic administration platform engineered
 
 ## 📑 Quick Links & Documentation
 - 🌐 **Live Web Application (Vercel):** [https://department-management-nsts7zbfi-rajal1.vercel.app](https://department-management-nsts7zbfi-rajal1.vercel.app)
-- ⚙️ **Live Backend API (Render):** [https://nuv-department-api.onrender.com/api/health](https://nuv-department-api.onrender.com/api/health)
+- ⚙️ **Live Backend API (Render):** [https://lj-department-api.onrender.com/api/health](https://lj-department-api.onrender.com/api/health)
 - 🗄️ **Live Cloud Database (Neon):** Managed Serverless PostgreSQL 16
 - ☁️ **Live Server Architecture Guide:** [LIVE_SERVER_ARCHITECTURE.md](LIVE_SERVER_ARCHITECTURE.md) | [LIVE_SERVER_ARCHITECTURE.html](LIVE_SERVER_ARCHITECTURE.html)
 - 📘 **New User Guide & System Manual:** [NEW_USER_GUIDE.md](NEW_USER_GUIDE.md) | [NEW_USER_GUIDE.html](NEW_USER_GUIDE.html)
@@ -45,7 +45,7 @@ graph LR
 | Component | Cloud Host | Live URL / Connection | Details |
 | :--- | :--- | :--- | :--- |
 | **Frontend UI** | **Vercel** | [Live Vercel URL](https://department-management-nsts7zbfi-rajal1.vercel.app) | React 19 + Vite SPA distributed on global edge network |
-| **Backend API** | **Render** | [nuv-department-api.onrender.com](https://nuv-department-api.onrender.com/api/health) | Node.js Express container running 24/7 in Singapore |
+| **Backend API** | **Render** | [lj-department-api.onrender.com](https://lj-department-api.onrender.com/api/health) | Node.js Express container running 24/7 in Singapore |
 | **PostgreSQL DB** | **Neon** | `ep-holy-wave-b3fspyik-pooler...` | Managed Serverless PostgreSQL 16 over encrypted SSL |
 
 
@@ -74,7 +74,7 @@ graph LR
                                        ▼
 ┌────────────────────────────────────────────────────────────────────────────────┐
 │                         DATA PERSISTENCE LAYER                                 │
-│   • PostgreSQL 14+ Relational Database Engine (nuv_department_db)              │
+│   • PostgreSQL 14+ Relational Database Engine (lj_department_db)               │
 │   • Relational Schema with Foreign Key Constraints & B-Tree Indexes            │
 └────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -169,7 +169,7 @@ The database consists of **7 relational tables** defined in [`database/schema.sq
 
 ### Prerequisites
 - **Node.js:** v18.0 or higher
-- **PostgreSQL:** v14.0 or higher running on port `5432` with database `nuv_department_db`
+- **PostgreSQL:** v14.0 or higher running on port `5432` with database `lj_department_db`
 
 ---
 
@@ -177,7 +177,7 @@ The database consists of **7 relational tables** defined in [`database/schema.sq
 
 1. Ensure PostgreSQL is running and create the database:
    ```sql
-   CREATE DATABASE nuv_department_db;
+   CREATE DATABASE lj_department_db;
    ```
 
 2. Configure backend environment in `backend/.env`:
@@ -187,8 +187,8 @@ The database consists of **7 relational tables** defined in [`database/schema.sq
    PGPORT=5432
    PGUSER=postgres
    PGPASSWORD=postgres
-   PGDATABASE=nuv_department_db
-   JWT_SECRET=nuv_erp_department_management_secure_key_2026
+   PGDATABASE=lj_department_db
+   JWT_SECRET=lj_erp_department_management_secure_key_2026
    ```
 
 ---
@@ -226,10 +226,10 @@ npm run dev
 
 | Role | Email Address | Password | Scoped Permissions |
 | :--- | :--- | :--- | :--- |
-| **System Administrator** | `admin@nuv.ac.in` | `admin123` | Full access across all modules, Live SQL, Sync DB |
-| **Dean of School (SET)** | `dean.set@nuv.ac.in` | `admin123` | University-wide observer, School directory, Excel exports |
-| **Head of Dept (CSE HOD)** | `r.sharma@nuv.ac.in` | `admin123` | Scoped to manage Computer Science & Engineering |
-| **Faculty Member (Professor)** | `amit.patel@nuv.ac.in` | `admin123` | Scoped to view department roster, edit self profile |
+| **System Administrator** | `admin@ljku.edu.in` | `admin123` | Full access across all modules, Live SQL, Sync DB |
+| **Dean of School (SET)** | `dean.set@ljku.edu.in` | `admin123` | University-wide observer, School directory, Excel exports |
+| **Head of Dept (CSE HOD)** | `amit.patel@ljku.edu.in` | `admin123` | Scoped to manage Computer Science & Engineering |
+| **Faculty Member (Professor)** | `neha.shah@ljku.edu.in` | `admin123` | Scoped to view department roster, edit self profile |
 
 ---
 

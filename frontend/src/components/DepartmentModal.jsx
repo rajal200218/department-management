@@ -216,7 +216,7 @@ export default function DepartmentModal({
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="hod.dept@nuv.ac.in"
+                  placeholder="hod.dept@ljku.edu.in"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />

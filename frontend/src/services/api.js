@@ -4,10 +4,10 @@ async function request(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
   
   // Retrieve current user and token from localStorage
-  const token = localStorage.getItem('nuv_token');
+  const token = localStorage.getItem('lju_token');
   let user = null;
   try {
-    const savedUser = localStorage.getItem('nuv_user');
+    const savedUser = localStorage.getItem('lju_user');
     if (savedUser) user = JSON.parse(savedUser);
   } catch (e) {
     user = null;
@@ -36,9 +36,9 @@ async function request(endpoint, options = {}) {
     if (!response.ok) {
       if (response.status === 401 && endpoint !== '/auth/login') {
         // Clear invalid/expired session
-        localStorage.removeItem('nuv_token');
-        localStorage.removeItem('nuv_user');
-        window.dispatchEvent(new CustomEvent('nuv_auth_expired', { detail: data.message || 'Session expired' }));
+        localStorage.removeItem('lju_token');
+        localStorage.removeItem('lju_user');
+        window.dispatchEvent(new CustomEvent('lju_auth_expired', { detail: data.message || 'Session expired' }));
       }
       throw new Error(data.message || `HTTP error! status: ${response.status}`);
     }
