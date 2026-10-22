@@ -267,6 +267,11 @@ async function initDatabase() {
             await seedDatabase();
             console.log('✔ Cloud database seeded successfully.');
           }
+
+          // Ensure student semester aligns with active academic session curriculum (Semester 4)
+          await client.query(`
+            UPDATE students SET current_semester = 4 WHERE current_semester != 4;
+          `);
         } catch (seedCheckErr) {
           console.warn('Auto-seed check notice:', seedCheckErr.message);
         }
