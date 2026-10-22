@@ -18,7 +18,7 @@ function parseSessionRange(sessionStr) {
 // Query parameters: search, school_id, status, session
 exports.getAllDepartments = async (req, res) => {
   try {
-    const { search, school_id, status, session } = req.query;
+    const { search, school_id, status, session } = req.query || {};
     const user = req.user;
     if (!user) {
       return res.status(401).json({ success: false, message: 'Authentication required. Please sign in.' });
@@ -123,7 +123,7 @@ exports.getAllDepartments = async (req, res) => {
 exports.getDepartmentById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { session } = req.query;
+    const { session } = req.query || {};
     const user = req.user;
     if (!user) {
       return res.status(401).json({ success: false, message: 'Authentication required. Please sign in.' });

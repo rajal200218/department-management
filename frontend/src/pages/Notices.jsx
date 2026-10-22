@@ -31,8 +31,11 @@ export default function Notices({ user, departments = [] }) {
   const canManage = isAdmin(user) || isHOD(user) || isFaculty(user);
 
   useEffect(() => {
-    fetchNotices();
-  }, [activeCategory, selectedDept, priorityFilter]);
+    const timer = setTimeout(() => {
+      fetchNotices();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [activeCategory, selectedDept, priorityFilter, searchQuery]);
 
   const fetchNotices = async () => {
     setLoading(true);

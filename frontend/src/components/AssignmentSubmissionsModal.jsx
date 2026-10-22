@@ -189,7 +189,7 @@ export default function AssignmentSubmissionsModal({
                     </span>
                   </div>
 
-                  {sub.submission_text && (
+                  {(sub.submission_text || sub.submission_content) && (
                     <div style={{
                       padding: '0.75rem 1rem',
                       background: 'rgba(0, 0, 0, 0.3)',
@@ -201,7 +201,7 @@ export default function AssignmentSubmissionsModal({
                       border: '1px solid rgba(255, 255, 255, 0.05)',
                       whiteSpace: 'pre-wrap'
                     }}>
-                      {sub.submission_text}
+                      {sub.submission_text || sub.submission_content}
                     </div>
                   )}
 

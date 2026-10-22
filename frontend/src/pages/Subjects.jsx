@@ -20,6 +20,7 @@ export default function Subjects({
   departments = [],
   programs = [],
   faculty = [],
+  refreshTrigger = 0,
   onOpenAddModal,
   onOpenEditModal,
   onOpenDeleteModal
@@ -35,7 +36,7 @@ export default function Subjects({
 
   useEffect(() => {
     loadSubjects();
-  }, [selectedDept, selectedSem, selectedType]);
+  }, [selectedDept, selectedSem, selectedType, refreshTrigger]);
 
   const loadSubjects = async () => {
     setLoading(true);

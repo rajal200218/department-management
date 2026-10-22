@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Send, BookMarked, Link, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { api } from '../services/api';
 
@@ -14,6 +14,20 @@ export default function StudentSubmitAssignmentModal({
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  useEffect(() => {
+    if (isOpen && assignment) {
+      setSubmissionText(assignment.my_submission_text || assignment.my_submission_content || '');
+      setFileUrl(assignment.my_submission_file_url || '');
+      setErrorMsg('');
+      setSuccessMsg('');
+    } else {
+      setSubmissionText('');
+      setFileUrl('');
+      setErrorMsg('');
+      setSuccessMsg('');
+    }
+  }, [isOpen, assignment]);
+
   if (!isOpen || !assignment) return null;
 
   const handleSubmit = async (e) => {
@@ -21,16 +35,25 @@ export default function StudentSubmitAssignmentModal({
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!submissionText.trim() && !fileUrl.trim()) {
+    const text = submissionText.trim();
+    const url = fileUrl.trim();
+
+    if (!text && !url) {
       setErrorMsg('Please enter your submission text/solution or provide a project link.');
       return;
     }
 
+    const parts = [];
+    if (text) parts.push(text);
+    if (url) parts.push(`Project/Attachment Link: ${url}`);
+    const combinedContent = parts.join('\n\n');
+
     setSubmitting(true);
     try {
       const res = await api.submitAssignment(assignment.id, {
-        submission_text: submissionText.trim(),
-        submission_file_url: fileUrl.trim() || null
+        submission_content: combinedContent,
+        submission_text: text || null,
+        submission_file_url: url || null
       });
 
       if (res.success) {

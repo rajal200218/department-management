@@ -34,7 +34,7 @@ export default function FacultyDirectory({
         f.designation?.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesDept = 
-        selectedDepts.length === 0 || selectedDepts.includes(f.department_id);
+        selectedDepts.length === 0 || selectedDepts.some(d => String(d) === String(f.department_id));
 
       const matchesDesignation = 
         selectedDesignations.length === 0 || selectedDesignations.includes(f.designation);

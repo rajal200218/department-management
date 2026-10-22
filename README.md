@@ -193,7 +193,26 @@ The database consists of **7 relational tables** defined in [`database/schema.sq
 
 ---
 
-### Step 2: Run with 1-Click Batch Script (Windows)
+### Step 2: Seed the Database (Single Portable & Idempotent Command)
+
+To initialize the schema and populate all required sample academic data (Users, Sessions, Schools, Departments, Faculty, Programs, Students, Subjects, Attendance, Timetables, Notices, Exams, and Assignments):
+
+**From the project root directory:**
+```bash
+npm run seed
+```
+
+**Or from the backend directory:**
+```bash
+cd backend
+npm run seed
+```
+
+> **Note on Idempotency:** This single command can be executed repeatedly on any system without creating duplicate records or unintentionally overwriting existing records. All seeding logic and sample data are self-contained in `backend/src/db/seed.js` without requiring external SQL files.
+
+---
+
+### Step 3: Run with 1-Click Batch Script (Windows)
 
 Double-click `start-all.bat` or run:
 ```cmd
@@ -202,7 +221,7 @@ start-all.bat
 
 ---
 
-### Step 3: Run Manually (Separate Terminals)
+### Step 4: Run Manually (Separate Terminals)
 
 **Terminal 1: Start Backend Server**
 ```bash

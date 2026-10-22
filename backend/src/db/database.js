@@ -246,12 +246,16 @@ async function initDatabase() {
             assignment_id INTEGER REFERENCES assignments(id) ON DELETE CASCADE,
             student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
             submission_content TEXT,
+            submission_text TEXT,
+            submission_file_url TEXT,
             submitted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             status VARCHAR(20) DEFAULT 'Submitted',
             marks_obtained NUMERIC(5, 2),
             feedback TEXT,
             CONSTRAINT uq_assignment_student UNIQUE(assignment_id, student_id)
           );
+          ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS submission_text TEXT;
+          ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS submission_file_url TEXT;
         `);
       }
     } catch (syncErr) {

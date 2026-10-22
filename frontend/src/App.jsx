@@ -83,6 +83,10 @@ export default function App() {
   const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState(null);
 
+  // Synchronization triggers for sub-views
+  const [studentsVersion, setStudentsVersion] = useState(0);
+  const [subjectsVersion, setSubjectsVersion] = useState(0);
+
   // Delete Modal State
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
@@ -416,12 +420,14 @@ export default function App() {
         const res = await api.updateStudent(editingStudent.id, formData);
         if (res.success) {
           showToast(`Student '${formData.name}' updated successfully.`);
+          setStudentsVersion(v => v + 1);
           fetchData();
         }
       } else {
         const res = await api.createStudent(formData);
         if (res.success) {
           showToast(`Student '${formData.name}' enrolled successfully.`);
+          setStudentsVersion(v => v + 1);
           fetchData();
         }
       }
@@ -457,12 +463,14 @@ export default function App() {
         const res = await api.updateSubject(editingSubject.id, formData);
         if (res.success) {
           showToast(`Course '${formData.subject_name}' updated.`);
+          setSubjectsVersion(v => v + 1);
           fetchData();
         }
       } else {
         const res = await api.createSubject(formData);
         if (res.success) {
           showToast(`Course '${formData.subject_name}' created.`);
+          setSubjectsVersion(v => v + 1);
           fetchData();
         }
       }
@@ -558,12 +566,14 @@ export default function App() {
         const res = await api.deleteStudent(deleteModal.item.id);
         if (res.success) {
           showToast(`Student record '${deleteModal.item.name}' deleted.`);
+          setStudentsVersion(v => v + 1);
           fetchData();
         }
       } else if (deleteModal.type === 'subject') {
         const res = await api.deleteSubject(deleteModal.item.id);
         if (res.success) {
           showToast(`Subject '${deleteModal.item.subject_name}' deleted.`);
+          setSubjectsVersion(v => v + 1);
           fetchData();
         }
       }
@@ -759,6 +769,7 @@ export default function App() {
             user={user}
             departments={departments}
             programs={programsList}
+            refreshTrigger={studentsVersion}
             onOpenAddModal={handleOpenAddStudent}
             onOpenEditModal={handleOpenEditStudent}
             onOpenDeleteModal={handleTriggerDeleteStudent}
@@ -772,6 +783,7 @@ export default function App() {
             departments={departments}
             programs={programsList}
             faculty={facultyList}
+            refreshTrigger={subjectsVersion}
             onOpenAddModal={handleOpenAddSubject}
             onOpenEditModal={handleOpenEditSubject}
             onOpenDeleteModal={handleTriggerDeleteSubject}
@@ -790,6 +802,7 @@ export default function App() {
             user={user}
             departments={departments}
             facultyList={facultyList}
+            programs={programsList}
           />
         )}
 

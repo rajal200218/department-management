@@ -29,7 +29,7 @@ const STANDARD_SLOTS = [
   '04:00 - 05:00'
 ];
 
-export default function Timetable({ user, departments = [], facultyList = [] }) {
+export default function Timetable({ user, departments = [], facultyList = [], programs = [] }) {
   const [timetables, setTimetables] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,6 +54,16 @@ export default function Timetable({ user, departments = [], facultyList = [] }) 
   useEffect(() => {
     fetchSubjects();
   }, []);
+
+  useEffect(() => {
+    if (!selectedDept && departments.length > 0) {
+      if (user?.department_id) {
+        setSelectedDept(String(user.department_id));
+      } else if (departments[0]?.id) {
+        setSelectedDept(String(departments[0].id));
+      }
+    }
+  }, [departments, user, selectedDept]);
 
   useEffect(() => {
     fetchTimetables();
@@ -509,6 +519,7 @@ export default function Timetable({ user, departments = [], facultyList = [] }) 
         onSave={handleSaveSlot}
         timetable={editingTimetable}
         departments={departments}
+        programs={programs}
         subjects={subjects}
         facultyList={facultyList}
       />

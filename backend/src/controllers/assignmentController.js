@@ -22,7 +22,10 @@ exports.getAssignments = async (req, res) => {
         my_sub.status as my_submission_status,
         my_sub.marks_obtained as my_marks,
         my_sub.submitted_at as my_submitted_at,
-        my_sub.feedback as my_feedback
+        my_sub.feedback as my_feedback,
+        my_sub.submission_content as my_submission_content,
+        COALESCE(my_sub.submission_text, my_sub.submission_content) as my_submission_text,
+        my_sub.submission_file_url as my_submission_file_url
       `;
     }
 
@@ -74,7 +77,7 @@ exports.getAssignments = async (req, res) => {
     `;
 
     if (user && user.isStudent) {
-      queryText += `, my_sub.id, my_sub.status, my_sub.marks_obtained, my_sub.submitted_at, my_sub.feedback`;
+      queryText += `, my_sub.id, my_sub.status, my_sub.marks_obtained, my_sub.submitted_at, my_sub.feedback, my_sub.submission_content, my_sub.submission_text, my_sub.submission_file_url`;
     }
 
     queryText += ` ORDER BY a.due_date DESC, a.created_at DESC`;
@@ -117,7 +120,9 @@ exports.getAssignmentById = async (req, res) => {
 
     // Get all student submissions for this assignment
     const subsRes = await db.query(
-      `SELECT asub.*, s.name as student_name, s.enrollment_no, s.email as student_email
+      `SELECT asub.*, 
+              COALESCE(asub.submission_text, asub.submission_content) as submission_text,
+              s.name as student_name, s.enrollment_no, s.email as student_email
        FROM assignment_submissions asub
        JOIN students s ON asub.student_id = s.id
        WHERE asub.assignment_id = $1
@@ -260,25 +265,50 @@ exports.deleteAssignment = async (req, res) => {
 exports.submitAssignment = async (req, res) => {
   try {
     const { id } = req.params;
-    const { submission_content } = req.body;
+    const { submission_content, submission_text, submission_file_url } = req.body;
     const user = req.user;
 
     if (!user || !user.isStudent) {
       return res.status(403).json({ success: false, message: 'Only students can submit assignments.' });
     }
 
-    if (!submission_content) {
+    const textPart = (submission_text !== undefined && submission_text !== null)
+      ? String(submission_text)
+      : (submission_content ? String(submission_content) : '');
+    const fileUrlPart = (submission_file_url !== undefined && submission_file_url !== null)
+      ? String(submission_file_url).trim()
+      : null;
+
+    let combinedContent = (submission_content && String(submission_content).trim()) || '';
+    if (!combinedContent) {
+      const parts = [];
+      if (textPart.trim()) parts.push(textPart.trim());
+      if (fileUrlPart) parts.push(`Project/Attachment Link: ${fileUrlPart}`);
+      combinedContent = parts.join('\n\n');
+    }
+
+    if (!combinedContent.trim() && !textPart.trim() && !fileUrlPart) {
       return res.status(400).json({ success: false, message: 'Submission content/link is required.' });
     }
 
     await db.query(
-      `INSERT INTO assignment_submissions (assignment_id, student_id, submission_content, status, submitted_at)
-       VALUES ($1, $2, $3, 'Submitted', CURRENT_TIMESTAMP)
+      `INSERT INTO assignment_submissions (
+         assignment_id, student_id, submission_content, submission_text, submission_file_url, status, submitted_at
+       )
+       VALUES ($1, $2, $3, $4, $5, 'Submitted', CURRENT_TIMESTAMP)
        ON CONFLICT (assignment_id, student_id)
        DO UPDATE SET submission_content = EXCLUDED.submission_content,
+                     submission_text = EXCLUDED.submission_text,
+                     submission_file_url = EXCLUDED.submission_file_url,
                      submitted_at = CURRENT_TIMESTAMP,
                      status = 'Submitted'`,
-      [parseInt(id, 10), user.id, submission_content.trim()]
+      [
+        parseInt(id, 10),
+        user.id,
+        combinedContent.trim(),
+        textPart.trim() || null,
+        fileUrlPart || null
+      ]
     );
 
     return res.status(200).json({

@@ -21,6 +21,21 @@ export default function Attendance({ user, departments = [], subjects = [] }) {
   const [activeTab, setActiveTab] = useState('register'); // 'register', 'mark'
   const canMark = canMarkAttendance(user);
 
+  // Subjects state with auto-fetch fallback
+  const [subjectsList, setSubjectsList] = useState(subjects || []);
+
+  useEffect(() => {
+    if (subjects && subjects.length > 0) {
+      setSubjectsList(subjects);
+    } else {
+      api.getSubjects().then(res => {
+        if (res.success && Array.isArray(res.data)) {
+          setSubjectsList(res.data);
+        }
+      }).catch(err => console.error('Error fetching subjects in Attendance:', err));
+    }
+  }, [subjects]);
+
   // Filter States for Register
   const [selectedDept, setSelectedDept] = useState(user?.department_id ? String(user.department_id) : '');
   const [selectedSem, setSelectedSem] = useState('4');
@@ -202,7 +217,7 @@ export default function Attendance({ user, departments = [], subjects = [] }) {
   };
 
   // Filter subjects based on department and semester
-  const availableSubjects = subjects.filter(s => {
+  const availableSubjects = subjectsList.filter(s => {
     if (activeTab === 'mark') {
       const matchDept = !markDept || s.department_id === parseInt(markDept, 10);
       const matchSem = !markSem || s.semester === parseInt(markSem, 10);
@@ -455,27 +470,27 @@ export default function Attendance({ user, departments = [], subjects = [] }) {
                   <tbody>
                     {reportData.map((row) => (
                       <tr key={row.student_id}>
-                        <td>
+                        <td style={{ whiteSpace: 'nowrap' }}>
                           <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#60A5FA' }}>
                             {row.enrollment_no}
                           </span>
                         </td>
                         <td>
-                          <div style={{ fontWeight: 700, color: '#F1F5F9' }}>{row.student_name}</div>
-                          <div style={{ fontSize: '0.75rem', color: '#64748B' }}>{row.student_email}</div>
+                          <div style={{ fontWeight: 700, color: '#F1F5F9', whiteSpace: 'nowrap' }}>{row.student_name}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#64748B', whiteSpace: 'nowrap' }}>{row.student_email}</div>
                         </td>
-                        <td>
+                        <td style={{ whiteSpace: 'nowrap' }}>
                           <span style={{ fontWeight: 600, color: '#F1F5F9' }}>{row.department_code}</span>
                           <span style={{ color: '#94A3B8', fontSize: '0.8rem' }}> • Sem {row.current_semester}</span>
                         </td>
-                        <td>
+                        <td style={{ whiteSpace: 'nowrap' }}>
                           <strong style={{ color: '#F1F5F9' }}>{row.attended_lectures}</strong> / {row.total_lectures}
                         </td>
-                        <td style={{ fontSize: '0.82rem', color: '#94A3B8' }}>
+                        <td style={{ fontSize: '0.82rem', color: '#94A3B8', whiteSpace: 'nowrap' }}>
                           <span style={{ color: row.absent_lectures > 0 ? '#EF4444' : '#64748B' }}>{row.absent_lectures} Absent</span>
                           {row.late_lectures > 0 && <span style={{ color: '#F59E0B' }}> • {row.late_lectures} Late</span>}
                         </td>
-                        <td>
+                        <td style={{ minWidth: '150px', whiteSpace: 'nowrap' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                             <div style={{
                               flex: 1,
@@ -499,8 +514,12 @@ export default function Attendance({ user, departments = [], subjects = [] }) {
                             </strong>
                           </div>
                         </td>
-                        <td>
+                        <td style={{ whiteSpace: 'nowrap' }}>
                           <span style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            whiteSpace: 'nowrap',
                             padding: '0.25rem 0.65rem',
                             borderRadius: '9999px',
                             fontSize: '0.72rem',
@@ -509,7 +528,17 @@ export default function Attendance({ user, departments = [], subjects = [] }) {
                             color: row.is_low_attendance ? '#F87171' : '#34D399',
                             border: `1px solid ${row.is_low_attendance ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`
                           }}>
-                            {row.is_low_attendance ? '⚠️ Defaulter (<75%)' : '✔ Exam Eligible'}
+                            {row.is_low_attendance ? (
+                              <>
+                                <AlertTriangle size={12} />
+                                <span>Defaulter (&lt;75%)</span>
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle2 size={12} />
+                                <span>Exam Eligible</span>
+                              </>
+                            )}
                           </span>
                         </td>
                       </tr>

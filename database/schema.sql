@@ -246,6 +246,8 @@ CREATE TABLE assignment_submissions (
     assignment_id INTEGER REFERENCES assignments(id) ON DELETE CASCADE,
     student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
     submission_content TEXT,
+    submission_text TEXT,
+    submission_file_url TEXT,
     submitted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(20) DEFAULT 'Submitted',
     marks_obtained NUMERIC(5, 2),

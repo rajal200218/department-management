@@ -306,14 +306,70 @@ exports.saveResults = async (req, res) => {
 };
 
 // GET /api/exams/student/my-results
-// Returns report card for logged-in student
+// Returns report card for logged-in student or selected student (Admin/Faculty)
 exports.getMyResults = async (req, res) => {
   try {
     const user = req.user;
-    if (!user || !user.isStudent) {
-      return res.status(403).json({ success: false, message: 'Student access only.' });
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Authentication required.' });
     }
 
+    let targetStudentId = null;
+
+    if (user.isStudent) {
+      targetStudentId = user.id;
+    } else if (req.query.student_id) {
+      targetStudentId = parseInt(req.query.student_id, 10);
+    } else {
+      // Default to first active student with exam results or first active student
+      const studentWithResults = await db.query(
+        `SELECT student_id FROM exam_results ORDER BY id DESC LIMIT 1`
+      );
+      if (studentWithResults.rows.length > 0) {
+        targetStudentId = studentWithResults.rows[0].student_id;
+      } else {
+        const firstStudent = await db.query(
+          `SELECT id FROM students WHERE status = 'Active' ORDER BY enrollment_no ASC LIMIT 1`
+        );
+        if (firstStudent.rows.length > 0) {
+          targetStudentId = firstStudent.rows[0].id;
+        }
+      }
+    }
+
+    if (!targetStudentId) {
+      return res.status(200).json({
+        success: true,
+        summary: { totalExamsTaken: 0, totalMarksEarned: 0, totalMarksPossible: 0, overallPercentage: 0 },
+        data: {
+          student: null,
+          totalMarks: 0,
+          totalMax: 0,
+          percentage: 0,
+          results: []
+        }
+      });
+    }
+
+    // Fetch student profile details
+    const studentRes = await db.query(
+      `SELECT s.id, s.name, s.enrollment_no, s.current_semester, s.email,
+              d.department_name, d.department_code,
+              p.program_name
+       FROM students s
+       LEFT JOIN departments d ON s.department_id = d.id
+       LEFT JOIN programs p ON s.program_id = p.id
+       WHERE s.id = $1`,
+      [targetStudentId]
+    );
+
+    if (studentRes.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Student record not found.' });
+    }
+
+    const student = studentRes.rows[0];
+
+    // Fetch exam results with course info
     const resultsRes = await db.query(
       `SELECT er.*, e.exam_name, e.max_marks, e.passing_marks, e.exam_date,
               sub.subject_name, sub.subject_code, sub.credits
@@ -321,12 +377,12 @@ exports.getMyResults = async (req, res) => {
        JOIN exams e ON er.exam_id = e.id
        JOIN subjects sub ON e.subject_id = sub.id
        WHERE er.student_id = $1
-       ORDER BY e.exam_date DESC`,
-      [user.id]
+       ORDER BY e.exam_date DESC, er.created_at DESC`,
+      [targetStudentId]
     );
 
-    const totalMarksPossible = resultsRes.rows.reduce((sum, r) => sum + parseFloat(r.max_marks), 0);
-    const totalMarksEarned = resultsRes.rows.reduce((sum, r) => sum + parseFloat(r.marks_obtained), 0);
+    const totalMarksPossible = resultsRes.rows.reduce((sum, r) => sum + parseFloat(r.max_marks || 0), 0);
+    const totalMarksEarned = resultsRes.rows.reduce((sum, r) => sum + parseFloat(r.marks_obtained || 0), 0);
     const overallPercentage = totalMarksPossible > 0 ? ((totalMarksEarned / totalMarksPossible) * 100).toFixed(1) : 0;
 
     return res.status(200).json({
@@ -337,7 +393,13 @@ exports.getMyResults = async (req, res) => {
         totalMarksPossible,
         overallPercentage: parseFloat(overallPercentage)
       },
-      data: resultsRes.rows
+      data: {
+        student,
+        totalMarks: totalMarksEarned,
+        totalMax: totalMarksPossible,
+        percentage: parseFloat(overallPercentage),
+        results: resultsRes.rows
+      }
     });
   } catch (err) {
     console.error('Error fetching student report card:', err);

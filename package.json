@@ -1,0 +1,12 @@
+{
+  "name": "lj-department-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LJ University ERP Phase 2 Module 12 - Department Management System",
+  "scripts": {
+    "seed": "npm --prefix backend run seed",
+    "start": "start-all.bat",
+    "backend:dev": "npm --prefix backend run dev",
+    "frontend:dev": "npm --prefix frontend run dev"
+  }
+}

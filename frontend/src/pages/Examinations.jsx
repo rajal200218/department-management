@@ -29,6 +29,17 @@ function getGradeBadgeClass(grade) {
   }
 }
 
+function getOverallGrade(totalMarks, totalMax) {
+  if (!totalMax || totalMax <= 0) return '—';
+  const pct = (parseFloat(totalMarks) / parseFloat(totalMax)) * 100;
+  if (pct >= 90) return 'A+';
+  if (pct >= 80) return 'A';
+  if (pct >= 70) return 'B+';
+  if (pct >= 60) return 'B';
+  if (pct >= 40) return 'C';
+  return 'F';
+}
+
 export default function Examinations({ user, departments = [] }) {
   const isStudentUser = isStudent(user);
   const canManage = isAdmin(user) || isHOD(user) || isFaculty(user);
@@ -39,6 +50,8 @@ export default function Examinations({ user, departments = [] }) {
   // Core Data
   const [exams, setExams] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [studentsList, setStudentsList] = useState([]);
+  const [selectedStudentId, setSelectedStudentId] = useState('');
   const [myResults, setMyResults] = useState(null);
   const [selectedExamId, setSelectedExamId] = useState('');
   const [selectedExamDetails, setSelectedExamDetails] = useState(null);
@@ -60,6 +73,8 @@ export default function Examinations({ user, departments = [] }) {
     fetchSubjects();
     if (isStudentUser) {
       fetchMyResults();
+    } else {
+      fetchStudentsList();
     }
   }, [isStudentUser]);
 
@@ -72,6 +87,30 @@ export default function Examinations({ user, departments = [] }) {
       fetchExamResultsSheet(selectedExamId);
     }
   }, [selectedExamId]);
+
+  useEffect(() => {
+    if (activeTab === 'my_report') {
+      if (isStudentUser) {
+        fetchMyResults();
+      } else if (selectedStudentId) {
+        fetchMyResults(selectedStudentId);
+      }
+    }
+  }, [activeTab, selectedStudentId]);
+
+  const fetchStudentsList = async () => {
+    try {
+      const res = await api.getStudents();
+      if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+        setStudentsList(res.data);
+        if (!selectedStudentId) {
+          setSelectedStudentId(String(res.data[0].id));
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching students list:', err);
+    }
+  };
 
   const fetchSubjects = async () => {
     try {
@@ -104,15 +143,33 @@ export default function Examinations({ user, departments = [] }) {
     }
   };
 
-  const fetchMyResults = async () => {
+  const fetchMyResults = async (studentId) => {
     setLoading(true);
     try {
-      const res = await api.getMyExamResults();
-      if (res.success) {
-        setMyResults(res.data);
+      const res = await api.getMyExamResults(studentId);
+      if (res.success && res.data) {
+        if (res.data.student && Array.isArray(res.data.results)) {
+          setMyResults(res.data);
+        } else if (Array.isArray(res.data)) {
+          // Fallback if raw array is returned
+          const totalMarks = res.data.reduce((sum, r) => sum + parseFloat(r.marks_obtained || 0), 0);
+          const totalMax = res.data.reduce((sum, r) => sum + parseFloat(r.max_marks || 0), 0);
+          setMyResults({
+            student: user && user.isStudent ? user : { name: 'Student', enrollment_no: '', current_semester: '', department_name: '' },
+            totalMarks,
+            totalMax,
+            percentage: totalMax > 0 ? ((totalMarks / totalMax) * 100).toFixed(1) : 0,
+            results: res.data
+          });
+        } else {
+          setMyResults(res.data);
+        }
+      } else {
+        setMyResults(null);
       }
     } catch (err) {
       console.error('Error fetching student report card:', err);
+      setMyResults(null);
     } finally {
       setLoading(false);
     }
@@ -603,11 +660,39 @@ export default function Examinations({ user, departments = [] }) {
       {/* TAB 3: STUDENT REPORT CARD */}
       {activeTab === 'my_report' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Student Selector Toolbar for Admin / Faculty */}
+          {!isStudentUser && (
+            <div className="filter-toolbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span className="form-label" style={{ margin: 0, fontWeight: 700 }}>Select Student:</span>
+                <select
+                  value={selectedStudentId}
+                  onChange={(e) => {
+                    const sid = e.target.value;
+                    setSelectedStudentId(sid);
+                    fetchMyResults(sid);
+                  }}
+                  className="form-select"
+                  style={{ width: 'auto', minWidth: '320px', padding: '0.45rem 0.85rem', fontSize: '0.82rem' }}
+                >
+                  {studentsList.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} ({s.enrollment_no} - Sem {s.current_semester})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
+                Official university transcript and evaluation dossier
+              </div>
+            </div>
+          )}
+
           {loading ? (
             <div style={{ padding: '4rem', textAlign: 'center', color: '#94A3B8' }}>
               Generating academic transcript...
             </div>
-          ) : !myResults || !myResults.student ? (
+          ) : !myResults || !myResults.student || !myResults.results || myResults.results.length === 0 ? (
             <div style={{
               padding: '3rem',
               textAlign: 'center',
@@ -618,8 +703,11 @@ export default function Examinations({ user, departments = [] }) {
             }}>
               <GraduationCap size={36} style={{ margin: '0 auto 0.75rem auto', opacity: 0.5 }} />
               <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#94A3B8' }}>
-                No examination records found for this student account
+                {myResults && myResults.student ? `No examination records found for ${myResults.student.name} (${myResults.student.enrollment_no})` : 'No examination records found for this student account'}
               </div>
+              <p style={{ margin: '0.4rem 0 0 0', fontSize: '0.8rem', color: '#64748B' }}>
+                Marks will appear here as soon as course instructors evaluate and publish results.
+              </p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -664,7 +752,7 @@ export default function Examinations({ user, departments = [] }) {
                       fontWeight: 800,
                       fontSize: '1.25rem'
                     }}>
-                      {myResults.totalMax > 0 && ((myResults.totalMarks / myResults.totalMax) * 100) >= 80 ? 'A' : 'B'}
+                      {getOverallGrade(myResults.totalMarks, myResults.totalMax)}
                     </div>
                   </div>
                 </div>
@@ -743,6 +831,7 @@ export default function Examinations({ user, departments = [] }) {
           showAlert('Marks recorded and published successfully.');
           fetchExams();
           if (selectedExamId) fetchExamResultsSheet(selectedExamId);
+          fetchMyResults(isStudentUser ? undefined : selectedStudentId);
         }}
       />
     </div>

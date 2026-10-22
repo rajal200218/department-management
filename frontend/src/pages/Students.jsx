@@ -22,6 +22,7 @@ export default function Students({
   user,
   departments = [],
   programs = [],
+  refreshTrigger = 0,
   onOpenAddModal,
   onOpenEditModal,
   onOpenDeleteModal,
@@ -39,7 +40,7 @@ export default function Students({
 
   useEffect(() => {
     loadStudents();
-  }, [selectedDept, selectedSem, selectedStatus]);
+  }, [selectedDept, selectedSem, selectedStatus, refreshTrigger]);
 
   const loadStudents = async () => {
     setLoading(true);

@@ -331,7 +331,10 @@ export const api = {
     method: 'POST',
     body: JSON.stringify(data)
   }),
-  getMyExamResults: () => request('/exams/student/my-results'),
+  getMyExamResults: (studentId) => {
+    const q = studentId ? `?student_id=${encodeURIComponent(studentId)}` : '';
+    return request(`/exams/student/my-results${q}`);
+  },
 
   // Assignments & Submissions
   getAssignments: (params = {}) => {
