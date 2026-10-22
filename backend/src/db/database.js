@@ -257,6 +257,19 @@ async function initDatabase() {
           ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS submission_text TEXT;
           ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS submission_file_url TEXT;
         `);
+
+        // Check if secondary module tables are empty, and auto-seed if needed
+        try {
+          const countRes = await client.query('SELECT count(*) FROM subjects');
+          if (parseInt(countRes.rows[0].count, 10) === 0) {
+            console.log('🌱 Cloud database missing subjects/attendance/exam records. Seeding comprehensive dataset...');
+            const { seedDatabase } = require('./seed');
+            await seedDatabase();
+            console.log('✔ Cloud database seeded successfully.');
+          }
+        } catch (seedCheckErr) {
+          console.warn('Auto-seed check notice:', seedCheckErr.message);
+        }
       }
     } catch (syncErr) {
       console.warn('Database schema sync notice:', syncErr.message);
