@@ -22,28 +22,31 @@ exports.getTimetables = async (req, res) => {
     `;
     const params = [];
 
-    // RBAC: If Student, scope to their department & current semester
+    // RBAC: If Student, scope to their department & target semester
     if (user && user.isStudent) {
       if (user.department_id) {
         params.push(user.department_id);
         queryText += ` AND t.department_id = $${params.length}`;
       }
-      if (user.current_semester) {
-        params.push(user.current_semester);
+      const targetSem = semester ? parseInt(semester, 10) : user.current_semester;
+      if (targetSem) {
+        params.push(targetSem);
         queryText += ` AND t.semester = $${params.length}`;
       }
-    } else if (user && !user.isAdmin && !user.isDean && user.department_id) {
-      // HOD or Faculty: default to their department
-      params.push(user.department_id);
-      queryText += ` AND t.department_id = $${params.length}`;
-    } else if (department_id) {
-      params.push(parseInt(department_id, 10));
-      queryText += ` AND t.department_id = $${params.length}`;
-    }
+    } else {
+      if (user && !user.isAdmin && !user.isDean && user.department_id) {
+        // HOD or Faculty: default to their department
+        params.push(user.department_id);
+        queryText += ` AND t.department_id = $${params.length}`;
+      } else if (department_id) {
+        params.push(parseInt(department_id, 10));
+        queryText += ` AND t.department_id = $${params.length}`;
+      }
 
-    if (semester) {
-      params.push(parseInt(semester, 10));
-      queryText += ` AND t.semester = $${params.length}`;
+      if (semester) {
+        params.push(parseInt(semester, 10));
+        queryText += ` AND t.semester = $${params.length}`;
+      }
     }
 
     if (program_id) {
