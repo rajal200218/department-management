@@ -101,11 +101,30 @@ async function initDatabase() {
         SELECT to_regclass('public.departments') AS dept_exists;
       `);
 
-      if (!tableCheck.rows[0].dept_exists) {
-        console.log('📜 Initializing tables & seeding full dataset via dedicated application seeder (seed.js)...');
+      let needsSync = !tableCheck.rows[0].dept_exists;
+      if (!needsSync) {
+        // Detect if database still contains legacy dummy departments or lacks full engineering branches (CH, BPHARM)
+        try {
+          const checkOutdated = await client.query(`
+            SELECT 
+              (SELECT COUNT(*) FROM departments WHERE department_code IN ('CH', 'BPHARM')) AS new_branches,
+              (SELECT COUNT(*) FROM departments WHERE department_code IN ('LAW', 'INT-DES', 'BIOTECH', 'CHEM', 'EEE')) AS old_branches;
+          `);
+          const newBranches = parseInt(checkOutdated.rows[0].new_branches, 10);
+          const oldBranches = parseInt(checkOutdated.rows[0].old_branches, 10);
+          if (newBranches === 0 || oldBranches > 0) {
+            needsSync = true;
+          }
+        } catch (e) {
+          // If query fails, proceed normally
+        }
+      }
+
+      if (needsSync) {
+        console.log('📜 Synchronizing database with official multi-branch dataset (seed.js)...');
         const { runSeed } = require('./seed');
         await runSeed();
-        console.log('✔ Schema tables and complete multi-branch dataset initialized successfully.');
+        console.log('✔ Complete multi-branch schema and dataset synchronized successfully.');
       } else {
         // Ensure faculty table has password column
         await client.query(`

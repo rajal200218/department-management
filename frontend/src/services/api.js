@@ -435,5 +435,11 @@ export const api = {
   gradeSubmission: (submissionId, data) => request(`/assignments/submissions/${submissionId}/grade`, {
     method: 'POST',
     body: JSON.stringify(data)
+  }),
+
+  // Database Dataset Synchronization (Admin only)
+  syncDataset: () => request('/dashboard/sync-seed', {
+    method: 'POST'
   })
 };
+

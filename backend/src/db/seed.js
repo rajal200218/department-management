@@ -12548,11 +12548,12 @@ async function runSeed() {
     await client.connect();
     console.log(`✔ Connected to target PostgreSQL database: ${dbName}`);
 
-    // [0/12] Legacy alias consolidation (Merge MECH -> ME and CIVIL -> CE)
+    // [0/12] Legacy alias consolidation & obsolete department cleanup
     await client.query(`
       DO $$
       BEGIN
         IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'departments') THEN
+          -- Consolidate legacy aliases
           IF EXISTS (SELECT 1 FROM departments WHERE department_code = 'MECH') AND EXISTS (SELECT 1 FROM departments WHERE department_code = 'ME') THEN
             UPDATE faculty SET department_id = (SELECT id FROM departments WHERE department_code = 'ME' LIMIT 1) WHERE department_id = (SELECT id FROM departments WHERE department_code = 'MECH' LIMIT 1);
             DELETE FROM departments WHERE department_code = 'MECH';
@@ -12561,6 +12562,9 @@ async function runSeed() {
             UPDATE faculty SET department_id = (SELECT id FROM departments WHERE department_code = 'CE' LIMIT 1) WHERE department_id = (SELECT id FROM departments WHERE department_code = 'CIVIL' LIMIT 1);
             DELETE FROM departments WHERE department_code = 'CIVIL';
           END IF;
+
+          -- Clean up old obsolete departments from previous university configurations:
+          DELETE FROM departments WHERE department_code IN ('LAW', 'INT-DES', 'BIOTECH', 'CHEM', 'EEE', 'MECH', 'CIVIL', 'BBA-MBA');
         END IF;
       END $$;
     `);

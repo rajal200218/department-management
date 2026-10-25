@@ -5,6 +5,7 @@ import { api } from '../services/api';
 export default function SqlInspector({ isOpen, onClose, dbMode }) {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
   const fetchLogs = async () => {
     setLoading(true);
@@ -15,6 +16,22 @@ export default function SqlInspector({ isOpen, onClose, dbMode }) {
       console.error('Failed to load SQL logs:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSyncDataset = async () => {
+    if (!window.confirm('Sync database with the official LJ University dataset? This will update all 16 departments, 68 students, 133 subjects, and 795 timetables.')) {
+      return;
+    }
+    setSyncing(true);
+    try {
+      const res = await api.syncDataset();
+      alert(res.message || 'Database synchronized successfully!');
+      window.location.reload();
+    } catch (err) {
+      alert(`Sync failed: ${err.message}`);
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -73,6 +90,23 @@ export default function SqlInspector({ isOpen, onClose, dbMode }) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            onClick={handleSyncDataset}
+            disabled={syncing}
+            className="btn btn-primary"
+            style={{
+              padding: '0.35rem 0.75rem',
+              fontSize: '0.75rem',
+              gap: '0.35rem',
+              background: '#2563EB',
+              border: 'none',
+              cursor: syncing ? 'wait' : 'pointer'
+            }}
+            title="Synchronize database with official LJ University dataset (16 depts, 68 students, 133 subjects, 795 timetables)"
+          >
+            <Database size={13} className={syncing ? 'spin' : ''} />
+            <span>{syncing ? 'Syncing...' : 'Sync Dataset'}</span>
+          </button>
           <button
             onClick={fetchLogs}
             className="btn btn-secondary"

@@ -278,3 +278,25 @@ exports.getQueryLogs = async (req, res) => {
     logs: db.getQueryLogs()
   });
 };
+
+// POST /api/dashboard/sync-seed (Synchronize official database dataset - Admin only)
+exports.syncSeed = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user || (!user.isAdmin && user.role !== 'admin')) {
+      return res.status(403).json({ success: false, message: 'Access Denied: Administrator authorization required.' });
+    }
+
+    const { runSeed } = require('../db/seed');
+    await runSeed();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Database synchronized successfully with official LJ University dataset (16 departments, 68 students, 133 subjects, 795 timetables).'
+    });
+  } catch (err) {
+    console.error('Error synchronizing database dataset:', err);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
