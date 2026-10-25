@@ -325,55 +325,20 @@ VALUES
 ON CONFLICT (assignment_id, student_id) DO NOTHING;
 `;
 
+const { runSeed } = require('./seed');
+
 async function runDmsMigration() {
-  const dbName = process.env.PGDATABASE || 'lj_department_db';
-  const user = process.env.PGUSER || 'postgres';
-  const password = process.env.PGPASSWORD || 'postgres';
-  const host = process.env.PGHOST || 'localhost';
-  const port = parseInt(process.env.PGPORT, 10) || 5432;
-
-  console.log(`Connecting to PostgreSQL database '${dbName}' at ${host}:${port}...`);
-  const client = new Client({
-    user,
-    password,
-    host,
-    port,
-    database: dbName
-  });
-
-  try {
-    await client.connect();
-    console.log('Connected to PostgreSQL database.');
-
-    console.log('Applying DMS Schema tables (students, subjects, attendance, timetables, notices, exams, results, assignments)...');
-    await client.query(dmsMigrationSql);
-    console.log('DMS Schema tables and indexes created successfully.');
-
-    console.log('Populating DMS seed records...');
-    await client.query(dmsSeedSql);
-    console.log('DMS seed records inserted successfully.');
-
-    // Verify row counts
-    const counts = await client.query(`
-      SELECT 
-        (SELECT count(*) FROM students) AS students_count,
-        (SELECT count(*) FROM subjects) AS subjects_count,
-        (SELECT count(*) FROM attendance) AS attendance_count,
-        (SELECT count(*) FROM timetables) AS timetables_count,
-        (SELECT count(*) FROM notices) AS notices_count,
-        (SELECT count(*) FROM exams) AS exams_count,
-        (SELECT count(*) FROM exam_results) AS results_count,
-        (SELECT count(*) FROM assignments) AS assignments_count
-    `);
-    console.log('\n======================================================');
-    console.log('DMS DATABASE STATUS:');
-    console.log(counts.rows[0]);
-    console.log('======================================================\n');
-  } catch (err) {
-    console.error('Migration error:', err);
-  } finally {
-    await client.end();
-  }
+  await runSeed();
 }
 
-runDmsMigration();
+if (require.main === module) {
+  runDmsMigration()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error('❌ DMS migration error:', err.message);
+      process.exit(1);
+    });
+}
+
+module.exports = { runDmsMigration };
+

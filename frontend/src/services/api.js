@@ -331,9 +331,16 @@ export const api = {
     method: 'POST',
     body: JSON.stringify(data)
   }),
-  getMyExamResults: (studentId) => {
-    const q = studentId ? `?student_id=${encodeURIComponent(studentId)}` : '';
+  getMyExamResults: (studentId, semester = null) => {
+    const params = new URLSearchParams();
+    if (studentId) params.append('student_id', studentId);
+    if (semester) params.append('semester', semester);
+    const q = params.toString() ? `?${params.toString()}` : '';
     return request(`/exams/student/my-results${q}`);
+  },
+  getAcademicHistory: (studentId) => {
+    const q = studentId ? `?student_id=${encodeURIComponent(studentId)}` : '';
+    return request(`/exams/student/academic-history${q}`);
   },
 
   // Assignments & Submissions

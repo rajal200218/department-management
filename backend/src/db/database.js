@@ -102,22 +102,10 @@ async function initDatabase() {
       `);
 
       if (!tableCheck.rows[0].dept_exists) {
-        console.log('📜 Initializing tables with schema.sql...');
-        const schemaPath = path.resolve(__dirname, '../../../database/schema.sql');
-        const seedPath = path.resolve(__dirname, '../../../database/seed.sql');
-
-        if (fs.existsSync(schemaPath)) {
-          const schemaSql = fs.readFileSync(schemaPath, 'utf8');
-          await client.query(schemaSql);
-          console.log('✔ Schema tables created in PostgreSQL.');
-        }
-
-        if (fs.existsSync(seedPath)) {
-          console.log('🌱 Populating initial seed data from seed.sql...');
-          const seedSql = fs.readFileSync(seedPath, 'utf8');
-          await client.query(seedSql);
-          console.log('✔ Initial seed data loaded successfully into PostgreSQL.');
-        }
+        console.log('📜 Initializing tables & seeding full dataset via dedicated application seeder (seed.js)...');
+        const { runSeed } = require('./seed');
+        await runSeed();
+        console.log('✔ Schema tables and complete multi-branch dataset initialized successfully.');
       } else {
         // Ensure faculty table has password column
         await client.query(`
@@ -256,6 +244,23 @@ async function initDatabase() {
           );
           ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS submission_text TEXT;
           ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS submission_file_url TEXT;
+
+          CREATE TABLE IF NOT EXISTS student_academic_history (
+            id SERIAL PRIMARY KEY,
+            student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+            semester INTEGER NOT NULL,
+            academic_year VARCHAR(50),
+            total_credits INTEGER DEFAULT 0,
+            credits_earned INTEGER DEFAULT 0,
+            sgpa NUMERIC(4, 2),
+            cgpa NUMERIC(4, 2),
+            status VARCHAR(50) DEFAULT 'Passed',
+            remarks VARCHAR(255),
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT uq_student_semester UNIQUE(student_id, semester)
+          );
+          CREATE INDEX IF NOT EXISTS idx_academic_history_student ON student_academic_history(student_id);
+          CREATE INDEX IF NOT EXISTS idx_academic_history_semester ON student_academic_history(semester);
         `);
       }
     } catch (syncErr) {

@@ -1,6 +1,7 @@
 -- =========================================================================
--- LJ UNIVERSITY ERP - SEED DATA SCRIPT
--- Realistic Academic Sample Data for LJ University
+-- [DEPRECATED / ARCHIVED] - DO NOT USE THIS SQL FILE FOR SEEDING
+-- Seed data is managed directly in dedicated application code: backend/src/db/seed.js
+-- Execute single command: npm run seed
 -- =========================================================================
 
 -- 1. Insert Default Admin User (Password: admin123)

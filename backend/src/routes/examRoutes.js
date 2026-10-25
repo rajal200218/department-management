@@ -4,6 +4,9 @@ const examController = require('../controllers/examController');
 const { requireAuth, requireFacultyOrAbove, requireAdminOrHOD } = require('../middleware/authMiddleware');
 
 router.get('/student/my-results', requireAuth, examController.getMyResults);
+router.get('/my-results', requireAuth, examController.getMyResults);
+router.get('/student/academic-history', requireAuth, examController.getAcademicHistory);
+router.get('/academic-history', requireAuth, examController.getAcademicHistory);
 router.get('/', requireAuth, examController.getExams);
 router.get('/:id', requireAuth, examController.getExamById);
 router.post('/', requireAuth, requireFacultyOrAbove, examController.createExam);

@@ -85,12 +85,23 @@ async function startServer() {
   await initDatabase();
   app.listen(PORT, () => {
     const smtpReady = isSmtpConfigured();
+    const dbTarget = process.env.DATABASE_URL
+      ? (() => {
+          try {
+            const u = new URL(process.env.DATABASE_URL);
+            return `Cloud PostgreSQL (${u.host}/${u.pathname.replace(/^\//, '')})`;
+          } catch {
+            return 'Cloud PostgreSQL (DATABASE_URL)';
+          }
+        })()
+      : `Local PostgreSQL (${process.env.PGDATABASE || 'lj_department_db'})`;
+
     console.log(`
 ===========================================================
 🏛️  LJ UNIVERSITY ERP - DEPARTMENT MANAGEMENT
 🚀  Backend Server running at: http://localhost:${PORT}
 📡  Health check: http://localhost:${PORT}/api/health
-📊  Database Engine: ${getDbMode()} (${process.env.PGDATABASE || 'lj_department_db'})
+📊  Database Engine: ${getDbMode()} — ${dbTarget}
 ✉️   Email Service (SMTP): ${smtpReady ? 'Active (Live Transporter)' : 'Development Mode (Console Fallback)'}
 ===========================================================
     `);

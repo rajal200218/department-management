@@ -369,21 +369,47 @@ exports.getMyResults = async (req, res) => {
 
     const student = studentRes.rows[0];
 
-    // Fetch exam results with course info
-    const resultsRes = await db.query(
-      `SELECT er.*, e.exam_name, e.max_marks, e.passing_marks, e.exam_date,
-              sub.subject_name, sub.subject_code, sub.credits
-       FROM exam_results er
-       JOIN exams e ON er.exam_id = e.id
-       JOIN subjects sub ON e.subject_id = sub.id
-       WHERE er.student_id = $1
-       ORDER BY e.exam_date DESC, er.created_at DESC`,
+    // Fetch student academic history (previous semesters SGPA, CGPA, Credits, Status)
+    const historyRes = await db.query(
+      `SELECT * FROM student_academic_history
+       WHERE student_id = $1
+       ORDER BY semester ASC`,
       [targetStudentId]
     );
+
+    // Fetch exam results with course info, semester, and credits
+    let resultsQuery = `
+      SELECT er.*, e.exam_name, e.max_marks, e.passing_marks, e.exam_date,
+             sub.subject_name, sub.subject_code, sub.credits, sub.semester as subject_semester
+      FROM exam_results er
+      JOIN exams e ON er.exam_id = e.id
+      JOIN subjects sub ON e.subject_id = sub.id
+      WHERE er.student_id = $1
+    `;
+    const resultsParams = [targetStudentId];
+
+    if (req.query.semester) {
+      resultsParams.push(parseInt(req.query.semester, 10));
+      resultsQuery += ` AND sub.semester = $${resultsParams.length}`;
+    }
+
+    resultsQuery += ` ORDER BY sub.semester ASC, e.exam_date DESC, er.created_at DESC`;
+
+    const resultsRes = await db.query(resultsQuery, resultsParams);
 
     const totalMarksPossible = resultsRes.rows.reduce((sum, r) => sum + parseFloat(r.max_marks || 0), 0);
     const totalMarksEarned = resultsRes.rows.reduce((sum, r) => sum + parseFloat(r.marks_obtained || 0), 0);
     const overallPercentage = totalMarksPossible > 0 ? ((totalMarksEarned / totalMarksPossible) * 100).toFixed(1) : 0;
+
+    // Calculate current CGPA from history if available or aggregate
+    let latestCgpa = null;
+    if (historyRes.rows.length > 0) {
+      latestCgpa = historyRes.rows[historyRes.rows.length - 1].cgpa;
+    } else if (overallPercentage > 0) {
+      latestCgpa = (parseFloat(overallPercentage) / 9.5).toFixed(2);
+    }
+
+    const totalCreditsEarned = historyRes.rows.reduce((acc, h) => acc + (parseInt(h.credits_earned, 10) || 0), 0);
 
     return res.status(200).json({
       success: true,
@@ -391,13 +417,18 @@ exports.getMyResults = async (req, res) => {
         totalExamsTaken: resultsRes.rows.length,
         totalMarksEarned,
         totalMarksPossible,
-        overallPercentage: parseFloat(overallPercentage)
+        overallPercentage: parseFloat(overallPercentage),
+        cgpa: latestCgpa ? parseFloat(latestCgpa) : null,
+        totalCreditsEarned: totalCreditsEarned > 0 ? totalCreditsEarned : resultsRes.rows.reduce((sum, r) => sum + (parseInt(r.credits, 10) || 3), 0),
+        semestersCompleted: historyRes.rows.length
       },
       data: {
         student,
         totalMarks: totalMarksEarned,
         totalMax: totalMarksPossible,
         percentage: parseFloat(overallPercentage),
+        cgpa: latestCgpa ? parseFloat(latestCgpa) : null,
+        academic_history: historyRes.rows,
         results: resultsRes.rows
       }
     });
@@ -406,3 +437,50 @@ exports.getMyResults = async (req, res) => {
     return res.status(500).json({ success: false, message: err.message });
   }
 };
+
+// GET /api/exams/student/academic-history
+// Returns chronological semester-by-semester academic history for a student
+exports.getAcademicHistory = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Authentication required.' });
+    }
+
+    let targetStudentId = null;
+
+    if (user.isStudent) {
+      targetStudentId = user.id;
+    } else if (req.query.student_id) {
+      targetStudentId = parseInt(req.query.student_id, 10);
+    } else {
+      const firstStudent = await db.query(
+        `SELECT id FROM students WHERE status = 'Active' ORDER BY enrollment_no ASC LIMIT 1`
+      );
+      if (firstStudent.rows.length > 0) {
+        targetStudentId = firstStudent.rows[0].id;
+      }
+    }
+
+    if (!targetStudentId) {
+      return res.status(200).json({ success: true, data: [] });
+    }
+
+    const historyRes = await db.query(
+      `SELECT * FROM student_academic_history
+       WHERE student_id = $1
+       ORDER BY semester ASC`,
+      [targetStudentId]
+    );
+
+    return res.status(200).json({
+      success: true,
+      student_id: targetStudentId,
+      data: historyRes.rows
+    });
+  } catch (err) {
+    console.error('Error fetching academic history:', err);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+

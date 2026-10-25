@@ -290,12 +290,75 @@ export default function StudentProfileModal({ isOpen, onClose, studentId }) {
                 </div>
               )}
 
-              {/* TAB 3: EXAM RESULTS */}
+              {/* TAB 3: EXAM RESULTS & PAST ACADEMIC HISTORY */}
               {activeTab === 'results' && (
-                <div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {/* Academic Performance & SGPA / CGPA Summary */}
+                  {student.academic_history?.length > 0 && (
+                    <div style={{
+                      background: 'linear-gradient(135deg, rgba(88, 28, 135, 0.25) 0%, rgba(15, 23, 42, 0.8) 100%)',
+                      border: '1px solid rgba(139, 92, 246, 0.3)',
+                      borderRadius: '12px',
+                      padding: '1.15rem'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+                        <div>
+                          <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 800, color: '#A78BFA', letterSpacing: '0.05em' }}>
+                            Academic Performance & History
+                          </div>
+                          <div style={{ fontSize: '1rem', fontWeight: 800, color: '#FFFFFF', marginTop: '0.15rem' }}>
+                            Semester Progression & CGPA Tracker
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: '0.7rem', color: '#94A3B8', textTransform: 'uppercase' }}>Overall CGPA</div>
+                            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FBCFE8' }}>
+                              {student.academic_history[student.academic_history.length - 1]?.cgpa || '—'}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: '0.7rem', color: '#94A3B8', textTransform: 'uppercase' }}>Credits Earned</div>
+                            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#60A5FA' }}>
+                              {student.academic_history.reduce((sum, h) => sum + (parseInt(h.credits_earned, 10) || 0), 0)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Semester-by-Semester Progression Cards */}
+                      <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(130px, 1fr))`, gap: '0.65rem' }}>
+                        {student.academic_history.map((h) => (
+                          <div
+                            key={h.semester}
+                            style={{
+                              background: 'rgba(0, 0, 0, 0.25)',
+                              border: '1px solid rgba(255, 255, 255, 0.08)',
+                              borderRadius: '8px',
+                              padding: '0.65rem',
+                              textAlign: 'center'
+                            }}
+                          >
+                            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#94A3B8' }}>
+                              Semester {h.semester}
+                            </div>
+                            <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#38BDF8', margin: '0.15rem 0' }}>
+                              {h.sgpa} <span style={{ fontSize: '0.65rem', color: '#64748B' }}>SGPA</span>
+                            </div>
+                            <div style={{ fontSize: '0.68rem', color: '#34D399', fontWeight: 600 }}>
+                              {h.status || 'Passed'}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Marksheet Table */}
                   <table className="data-table" style={{ width: '100%' }}>
                     <thead>
                       <tr>
+                        <th>Sem</th>
                         <th>Subject</th>
                         <th>Exam Title</th>
                         <th>Date</th>
@@ -308,6 +371,18 @@ export default function StudentProfileModal({ isOpen, onClose, studentId }) {
                       {student.exam_results?.length > 0 ? (
                         student.exam_results.map((res) => (
                           <tr key={res.id}>
+                            <td>
+                              <span style={{
+                                padding: '0.15rem 0.45rem',
+                                borderRadius: '4px',
+                                fontSize: '0.7rem',
+                                fontWeight: 700,
+                                background: 'rgba(59, 130, 246, 0.15)',
+                                color: '#93C5FD'
+                              }}>
+                                Sem {res.subject_semester || student.current_semester}
+                              </span>
+                            </td>
                             <td>
                               <strong>{res.subject_code}</strong>
                               <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>{res.subject_name}</div>
@@ -338,7 +413,7 @@ export default function StudentProfileModal({ isOpen, onClose, studentId }) {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={6} style={{ textAlign: 'center', color: '#94A3B8', padding: '2rem' }}>
+                          <td colSpan={7} style={{ textAlign: 'center', color: '#94A3B8', padding: '2rem' }}>
                             No examination results recorded yet for this student.
                           </td>
                         </tr>

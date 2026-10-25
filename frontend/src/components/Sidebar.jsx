@@ -34,7 +34,13 @@ export default function Sidebar({ currentView, setCurrentView, user }) {
   // Main menu items for Admin/HOD/Faculty
   const mainNavItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'students', label: 'Students', icon: GraduationCap },
+    ...(adminOrDean || hod ? [{ 
+      id: 'students', 
+      label: adminOrDean ? 'Students' : 'Department Students', 
+      icon: GraduationCap 
+    }] : [
+      { id: 'students', label: 'Student Directory', icon: GraduationCap }
+    ]),
     { 
       id: 'faculty', 
       label: adminOrDean ? 'Faculty & HODs' : hod ? 'Department Faculty' : 'Faculty Directory', 
@@ -57,14 +63,14 @@ export default function Sidebar({ currentView, setCurrentView, user }) {
     { id: 'notices', label: 'Notice Board', icon: Bell },
   ];
 
-  // Academic structure navigation items
+  // Academic structure navigation items (Admin / Dean / HOD only)
   const academicStructure = [
     ...(adminOrDean ? [{ id: 'schools', label: 'Schools & Institutes', icon: School }] : []),
-    { 
+    ...(adminOrDean || hod ? [{ 
       id: 'programs', 
       label: adminOrDean ? 'Academic Programs' : 'Degree Programs', 
       icon: GraduationCap 
-    },
+    }] : []),
   ];
 
   return (

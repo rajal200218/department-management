@@ -142,15 +142,23 @@ exports.getStudentById = async (req, res) => {
       [id, student.department_id, student.current_semester]
     );
 
-    // Exam Results
+    // Exam Results with semester and credits
     const resultsRes = await db.query(
       `SELECT er.*, e.exam_name, e.max_marks, e.passing_marks, e.exam_date,
-              sub.subject_name, sub.subject_code
+              sub.subject_name, sub.subject_code, sub.semester as subject_semester, sub.credits
        FROM exam_results er
        JOIN exams e ON er.exam_id = e.id
        JOIN subjects sub ON e.subject_id = sub.id
        WHERE er.student_id = $1
-       ORDER BY e.exam_date DESC`,
+       ORDER BY sub.semester ASC, e.exam_date DESC`,
+      [id]
+    );
+
+    // Past Academic History (Semester-by-semester SGPA, CGPA, Credits, Status)
+    const historyRes = await db.query(
+      `SELECT * FROM student_academic_history
+       WHERE student_id = $1
+       ORDER BY semester ASC`,
       [id]
     );
 
@@ -160,7 +168,8 @@ exports.getStudentById = async (req, res) => {
         ...student,
         attendance_summary: attRes.rows[0] || { total_classes: 0, attendance_percentage: 100 },
         subject_attendance: subjectAttRes.rows,
-        exam_results: resultsRes.rows
+        exam_results: resultsRes.rows,
+        academic_history: historyRes.rows
       }
     });
   } catch (err) {

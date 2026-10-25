@@ -62,6 +62,7 @@ export default function Examinations({ user, departments = [] }) {
   const [selectedDept, setSelectedDept] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedReportSem, setSelectedReportSem] = useState('All');
 
   // Modals
   const [isExamModalOpen, setIsExamModalOpen] = useState(false);
@@ -711,10 +712,10 @@ export default function Examinations({ user, departments = [] }) {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {/* Transcript Overview Card */}
+              {/* Transcript Overview Banner */}
               <div style={{
-                background: 'linear-gradient(135deg, rgba(88, 28, 135, 0.4) 0%, rgba(19, 30, 53, 0.95) 100%)',
-                border: '1px solid rgba(139, 92, 246, 0.35)',
+                background: 'linear-gradient(135deg, rgba(88, 28, 135, 0.45) 0%, rgba(30, 27, 75, 0.95) 100%)',
+                border: '1px solid rgba(139, 92, 246, 0.4)',
                 borderRadius: '16px',
                 padding: '1.75rem',
                 boxShadow: 'var(--shadow-md)'
@@ -722,40 +723,169 @@ export default function Examinations({ user, departments = [] }) {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
                   <div>
                     <span className="badge badge-purple" style={{ marginBottom: '0.5rem' }}>
-                      OFFICIAL GRADE TRANSCRIPT
+                      OFFICIAL GRADE TRANSCRIPT & ACADEMIC DOSSIER
                     </span>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFFFFF', margin: '0.35rem 0' }}>
                       {myResults.student.name}
                     </h2>
                     <p style={{ color: '#CBD5E1', fontSize: '0.8125rem', fontFamily: 'var(--font-mono)' }}>
-                      Enrollment: <strong style={{ color: '#C4B5FD' }}>{myResults.student.enrollment_no}</strong> • Semester {myResults.student.current_semester} • {myResults.student.department_name}
+                      Enrollment: <strong style={{ color: '#C4B5FD' }}>{myResults.student.enrollment_no}</strong> • Current Semester {myResults.student.current_semester} • {myResults.student.department_name}
                     </p>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '0.725rem', fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase' }}>Aggregate Score</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#FFFFFF' }}>
-                        {myResults.totalMax > 0 ? `${((myResults.totalMarks / myResults.totalMax) * 100).toFixed(1)}%` : '0%'}
+                      <div style={{ fontSize: '0.725rem', fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase' }}>Cumulative CGPA</div>
+                      <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#FBCFE8' }}>
+                        {myResults.cgpa || (myResults.totalMax > 0 ? ((myResults.totalMarks / myResults.totalMax) * 10 / 10).toFixed(2) : '—')}
+                        <span style={{ fontSize: '0.85rem', color: '#A78BFA' }}> / 10.0</span>
                       </div>
                     </div>
                     <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '12px',
-                      background: 'rgba(139, 92, 246, 0.25)',
-                      border: '1px solid rgba(139, 92, 246, 0.4)',
+                      width: '52px',
+                      height: '52px',
+                      borderRadius: '14px',
+                      background: 'rgba(139, 92, 246, 0.3)',
+                      border: '1px solid rgba(139, 92, 246, 0.5)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: '#C4B5FD',
                       fontWeight: 800,
-                      fontSize: '1.25rem'
+                      fontSize: '1.35rem'
                     }}>
                       {getOverallGrade(myResults.totalMarks, myResults.totalMax)}
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Performance Progression Over Time (Past Semesters) */}
+              {myResults.academic_history?.length > 0 && (
+                <div className="section-box" style={{ background: 'rgba(15, 23, 42, 0.7)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.725rem', textTransform: 'uppercase', fontWeight: 800, color: '#A78BFA', letterSpacing: '0.05em' }}>
+                        Performance Over Time
+                      </div>
+                      <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF', margin: '0.2rem 0 0 0' }}>
+                        Semester-by-Semester Academic Progression
+                      </h3>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
+                      Track SGPA & cumulative CGPA evolution
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(150px, 1fr))`, gap: '0.85rem' }}>
+                    {myResults.academic_history.map((h) => (
+                      <div
+                        key={h.semester}
+                        onClick={() => setSelectedReportSem(String(h.semester))}
+                        style={{
+                          background: selectedReportSem === String(h.semester) 
+                            ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(139, 92, 246, 0.15) 100%)' 
+                            : 'rgba(0, 0, 0, 0.3)',
+                          border: selectedReportSem === String(h.semester)
+                            ? '1px solid rgba(139, 92, 246, 0.6)'
+                            : '1px solid rgba(255, 255, 255, 0.08)',
+                          borderRadius: '10px',
+                          padding: '0.85rem',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#CBD5E1' }}>
+                            Sem {h.semester}
+                          </span>
+                          <span style={{ fontSize: '0.65rem', color: '#64748B' }}>
+                            {h.academic_year || ''}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#38BDF8', margin: '0.15rem 0' }}>
+                          {h.sgpa} <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>SGPA</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.7rem', marginTop: '0.35rem' }}>
+                          <span style={{ color: '#94A3B8' }}>CGPA: <strong style={{ color: '#FBCFE8' }}>{h.cgpa}</strong></span>
+                          <span style={{ color: '#34D399', fontWeight: 700 }}>{h.status || 'Passed'}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Summary KPIs */}
+              <div className="stats-grid-4">
+                <div className="stat-card" style={{ cursor: 'default' }}>
+                  <div className="stat-label">Cumulative CGPA</div>
+                  <div className="stat-value" style={{ color: '#FBCFE8' }}>
+                    {myResults.cgpa || (myResults.totalMax > 0 ? ((myResults.totalMarks / myResults.totalMax) * 10 / 10).toFixed(2) : '—')}
+                  </div>
+                  <div className="stat-sub">Scale of 10.00</div>
+                </div>
+                <div className="stat-card" style={{ cursor: 'default' }}>
+                  <div className="stat-label">Credits Earned</div>
+                  <div className="stat-value" style={{ color: '#60A5FA' }}>
+                    {myResults.academic_history?.reduce((acc, h) => acc + (parseInt(h.credits_earned, 10) || 0), 0) || myResults.results?.reduce((acc, r) => acc + (parseInt(r.credits, 10) || 3), 0) || 0}
+                  </div>
+                  <div className="stat-sub">Academic credits</div>
+                </div>
+                <div className="stat-card" style={{ cursor: 'default' }}>
+                  <div className="stat-label">Semesters Completed</div>
+                  <div className="stat-value" style={{ color: '#A78BFA' }}>
+                    {myResults.academic_history?.length || 0}
+                  </div>
+                  <div className="stat-sub">Degree progression</div>
+                </div>
+                <div className="stat-card" style={{ cursor: 'default' }}>
+                  <div className="stat-label">Overall Aggregate</div>
+                  <div className="stat-value" style={{ color: '#34D399' }}>
+                    {myResults.totalMax > 0 ? `${((myResults.totalMarks / myResults.totalMax) * 100).toFixed(1)}%` : '0%'}
+                  </div>
+                  <div className="stat-sub">{myResults.totalMarks} / {myResults.totalMax} marks</div>
+                </div>
+              </div>
+
+              {/* Semester Filter Tabs */}
+              <div className="filter-toolbar" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <span className="form-label" style={{ margin: 0, fontWeight: 700 }}>Filter Semester:</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedReportSem('All')}
+                  style={{
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    background: selectedReportSem === 'All' ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                    border: selectedReportSem === 'All' ? '1px solid #3B82F6' : '1px solid rgba(255, 255, 255, 0.1)',
+                    color: selectedReportSem === 'All' ? '#60A5FA' : '#94A3B8'
+                  }}
+                >
+                  All Semesters ({myResults.results?.length || 0})
+                </button>
+                {Array.from(new Set(myResults.results?.map(r => r.subject_semester || myResults.student?.current_semester))).sort((a, b) => a - b).map(sem => (
+                  <button
+                    key={sem}
+                    type="button"
+                    onClick={() => setSelectedReportSem(String(sem))}
+                    style={{
+                      padding: '0.35rem 0.75rem',
+                      borderRadius: '6px',
+                      fontSize: '0.78rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      background: selectedReportSem === String(sem) ? 'rgba(139, 92, 246, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                      border: selectedReportSem === String(sem) ? '1px solid #8B5CF6' : '1px solid rgba(255, 255, 255, 0.1)',
+                      color: selectedReportSem === String(sem) ? '#C4B5FD' : '#94A3B8'
+                    }}
+                  >
+                    Semester {sem} ({myResults.results?.filter(r => (r.subject_semester || myResults.student?.current_semester) === sem).length})
+                  </button>
+                ))}
               </div>
 
               {/* Marksheet Table */}
@@ -764,9 +894,11 @@ export default function Examinations({ user, departments = [] }) {
                   <table className="data-table" style={{ margin: 0 }}>
                     <thead>
                       <tr>
+                        <th>Sem</th>
                         <th>Subject Code</th>
                         <th>Course Title</th>
                         <th>Exam</th>
+                        <th style={{ textAlign: 'center' }}>Credits</th>
                         <th style={{ textAlign: 'center' }}>Marks</th>
                         <th style={{ textAlign: 'center' }}>Percentage</th>
                         <th style={{ textAlign: 'center' }}>Grade</th>
@@ -775,35 +907,52 @@ export default function Examinations({ user, departments = [] }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {myResults.results?.map((r, idx) => {
-                        const pct = ((r.marks_obtained / r.max_marks) * 100).toFixed(1);
-                        const isPassing = r.marks_obtained >= r.passing_marks;
+                      {myResults.results
+                        ?.filter(r => selectedReportSem === 'All' || String(r.subject_semester || myResults.student?.current_semester) === String(selectedReportSem))
+                        .map((r, idx) => {
+                          const pct = ((r.marks_obtained / r.max_marks) * 100).toFixed(1);
+                          const isPassing = r.marks_obtained >= r.passing_marks;
 
-                        return (
-                          <tr key={idx}>
-                            <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#C4B5FD' }}>{r.subject_code}</td>
-                            <td style={{ fontWeight: 700, color: '#FFFFFF' }}>{r.subject_name}</td>
-                            <td style={{ fontSize: '0.8rem', color: '#CBD5E1' }}>{r.exam_name}</td>
-                            <td style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#FFFFFF' }}>
-                              {r.marks_obtained} / {r.max_marks}
-                            </td>
-                            <td style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#CBD5E1' }}>{pct}%</td>
-                            <td style={{ textAlign: 'center' }}>
-                              <span className={getGradeBadgeClass(r.grade)}>
-                                {r.grade}
-                              </span>
-                            </td>
-                            <td style={{ textAlign: 'center' }}>
-                              <span className={isPassing ? 'badge badge-active' : 'badge badge-red'}>
-                                {isPassing ? 'PASS' : 'FAIL'}
-                              </span>
-                            </td>
-                            <td style={{ fontSize: '0.75rem', color: '#94A3B8', fontStyle: 'italic' }}>
-                              {r.remarks || 'Standard evaluation'}
-                            </td>
-                          </tr>
-                        );
-                      })}
+                          return (
+                            <tr key={idx}>
+                              <td>
+                                <span style={{
+                                  padding: '0.15rem 0.45rem',
+                                  borderRadius: '4px',
+                                  fontSize: '0.7rem',
+                                  fontWeight: 700,
+                                  background: 'rgba(59, 130, 246, 0.15)',
+                                  color: '#93C5FD'
+                                }}>
+                                  Sem {r.subject_semester || myResults.student?.current_semester}
+                                </span>
+                              </td>
+                              <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#C4B5FD' }}>{r.subject_code}</td>
+                              <td style={{ fontWeight: 700, color: '#FFFFFF' }}>{r.subject_name}</td>
+                              <td style={{ fontSize: '0.8rem', color: '#CBD5E1' }}>{r.exam_name}</td>
+                              <td style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: '#CBD5E1' }}>
+                                {r.credits || 3}
+                              </td>
+                              <td style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#FFFFFF' }}>
+                                {r.marks_obtained} / {r.max_marks}
+                              </td>
+                              <td style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#CBD5E1' }}>{pct}%</td>
+                              <td style={{ textAlign: 'center' }}>
+                                <span className={getGradeBadgeClass(r.grade)}>
+                                  {r.grade}
+                                </span>
+                              </td>
+                              <td style={{ textAlign: 'center' }}>
+                                <span className={isPassing ? 'badge badge-active' : 'badge badge-red'}>
+                                  {isPassing ? 'PASS' : 'FAIL'}
+                                </span>
+                              </td>
+                              <td style={{ fontSize: '0.75rem', color: '#94A3B8', fontStyle: 'italic' }}>
+                                {r.remarks || 'Standard evaluation'}
+                              </td>
+                            </tr>
+                          );
+                        })}
                     </tbody>
                   </table>
                 </div>

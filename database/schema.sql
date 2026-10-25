@@ -255,6 +255,22 @@ CREATE TABLE assignment_submissions (
     CONSTRAINT uq_assignment_student UNIQUE(assignment_id, student_id)
 );
 
+-- 17. STUDENT ACADEMIC HISTORY TABLE (Past Semester Academic History & Performance Tracking)
+CREATE TABLE student_academic_history (
+    id SERIAL PRIMARY KEY,
+    student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+    semester INTEGER NOT NULL,
+    academic_year VARCHAR(50),
+    total_credits INTEGER DEFAULT 0,
+    credits_earned INTEGER DEFAULT 0,
+    sgpa NUMERIC(4, 2),
+    cgpa NUMERIC(4, 2),
+    status VARCHAR(50) DEFAULT 'Passed', -- 'Passed', 'First Class with Distinction', 'First Class', 'Promoted'
+    remarks VARCHAR(255),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_student_semester UNIQUE(student_id, semester)
+);
+
 -- Indexes for lightning fast queries and search
 CREATE INDEX idx_academic_sessions_status ON academic_sessions(status);
 CREATE INDEX idx_departments_school_id ON departments(school_id);
@@ -278,3 +294,5 @@ CREATE INDEX idx_notices_dept ON notices(department_id);
 CREATE INDEX idx_exams_subject ON exams(subject_id);
 CREATE INDEX idx_exam_results_student ON exam_results(student_id);
 CREATE INDEX idx_assignments_subject ON assignments(subject_id);
+CREATE INDEX idx_academic_history_student ON student_academic_history(student_id);
+CREATE INDEX idx_academic_history_semester ON student_academic_history(semester);

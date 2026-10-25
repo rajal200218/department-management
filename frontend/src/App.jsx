@@ -217,6 +217,23 @@ export default function App() {
     }
   }, [isAuthenticated, user?.email, activeSession]);
 
+  // View RBAC Guard to prevent unauthorized view access
+  useEffect(() => {
+    if (!user) return;
+    const isStudentUser = user?.role === 'student' || Boolean(user?.isStudent);
+    if (isStudentUser) {
+      const allowedStudentViews = ['dashboard', 'attendance', 'timetables', 'exams', 'assignments', 'notices', 'faculty'];
+      if (!allowedStudentViews.includes(currentView)) {
+        setCurrentView('dashboard');
+      }
+    } else if (!user.isAdmin && !user.isDean) {
+      const adminOnlyViews = ['schools'];
+      if (adminOnlyViews.includes(currentView)) {
+        setCurrentView('dashboard');
+      }
+    }
+  }, [currentView, user]);
+
   // Auth Handlers
   const handleLoginSuccess = (userData, token) => {
     localStorage.setItem('lju_user', JSON.stringify(userData));
