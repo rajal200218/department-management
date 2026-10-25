@@ -44,32 +44,35 @@ exports.getAssignments = async (req, res) => {
     queryText += ` WHERE 1=1`;
     const params = [];
 
-    // RBAC: If Student, scope to their department & current semester
+    // RBAC: If Student, scope to their department & target semester
     if (user && user.isStudent) {
       if (user.department_id) {
         params.push(user.department_id);
         queryText += ` AND a.department_id = $${params.length}`;
       }
-      if (user.current_semester) {
-        params.push(user.current_semester);
+      const targetSem = semester ? parseInt(semester, 10) : user.current_semester;
+      if (targetSem) {
+        params.push(targetSem);
         queryText += ` AND a.semester = $${params.length}`;
       }
-    } else if (user && !user.isAdmin && !user.isDean && user.department_id) {
-      params.push(user.department_id);
-      queryText += ` AND a.department_id = $${params.length}`;
-    } else if (department_id) {
-      params.push(parseInt(department_id, 10));
-      queryText += ` AND a.department_id = $${params.length}`;
+    } else {
+      if (user && !user.isAdmin && !user.isDean && user.department_id) {
+        params.push(user.department_id);
+        queryText += ` AND a.department_id = $${params.length}`;
+      } else if (department_id) {
+        params.push(parseInt(department_id, 10));
+        queryText += ` AND a.department_id = $${params.length}`;
+      }
+
+      if (semester) {
+        params.push(parseInt(semester, 10));
+        queryText += ` AND a.semester = $${params.length}`;
+      }
     }
 
     if (subject_id) {
       params.push(parseInt(subject_id, 10));
       queryText += ` AND a.subject_id = $${params.length}`;
-    }
-
-    if (semester) {
-      params.push(parseInt(semester, 10));
-      queryText += ` AND a.semester = $${params.length}`;
     }
 
     queryText += `

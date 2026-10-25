@@ -13,11 +13,26 @@ exports.login = async (req, res) => {
     }
 
     const cleanEmail = email.trim().toLowerCase();
+    const candidateEmails = [cleanEmail];
+    if (cleanEmail.endsWith('@ljku.edu.in')) {
+      candidateEmails.push(cleanEmail.replace('@ljku.edu.in', '@nuv.ac.in'));
+      if (cleanEmail === 'admin@ljku.edu.in') candidateEmails.push('admin@nuv.ac.in');
+      if (cleanEmail === 'dean.academic@ljku.edu.in') candidateEmails.push('dean.academic@nuv.ac.in');
+      if (cleanEmail === 'amit.patel@ljku.edu.in') candidateEmails.push('rajesh.sharma@nuv.ac.in', 'amit.patel@nuv.ac.in');
+      if (cleanEmail === 'priya.joshi@ljku.edu.in') candidateEmails.push('priya.desai@nuv.ac.in');
+    } else if (cleanEmail.endsWith('@nuv.ac.in')) {
+      candidateEmails.push(cleanEmail.replace('@nuv.ac.in', '@ljku.edu.in'));
+      if (cleanEmail === 'admin@nuv.ac.in') candidateEmails.push('admin@ljku.edu.in');
+      if (cleanEmail === 'dean.academic@nuv.ac.in') candidateEmails.push('dean.academic@ljku.edu.in');
+      if (cleanEmail === 'rajesh.sharma@nuv.ac.in') candidateEmails.push('amit.patel@ljku.edu.in');
+      if (cleanEmail === 'priya.desai@nuv.ac.in') candidateEmails.push('priya.joshi@ljku.edu.in');
+    }
+    const emailList = [...new Set(candidateEmails)];
 
     // 1. Check in `users` table (Admin / Dean accounts)
     const userResult = await db.query(
-      'SELECT id, name, email, password, role, avatar_url FROM users WHERE LOWER(email) = $1',
-      [cleanEmail]
+      'SELECT id, name, email, password, role, avatar_url FROM users WHERE LOWER(email) = ANY($1)',
+      [emailList]
     );
 
     if (userResult.rows.length > 0) {
@@ -58,8 +73,8 @@ exports.login = async (req, res) => {
               CASE WHEN d.hod_id = f.id THEN TRUE ELSE FALSE END AS is_hod
        FROM faculty f
        LEFT JOIN departments d ON f.department_id = d.id
-       WHERE LOWER(f.email) = $1`,
-      [cleanEmail]
+       WHERE LOWER(f.email) = ANY($1)`,
+      [emailList]
     );
 
     if (facultyResult.rows.length > 0) {
@@ -123,8 +138,8 @@ exports.login = async (req, res) => {
        FROM students s
        LEFT JOIN departments d ON s.department_id = d.id
        LEFT JOIN programs p ON s.program_id = p.id
-       WHERE LOWER(s.email) = $1 OR LOWER(s.enrollment_no) = $1`,
-      [cleanEmail]
+       WHERE LOWER(s.email) = ANY($1) OR LOWER(s.enrollment_no) = $2`,
+      [emailList, cleanEmail]
     );
 
     if (studentResult.rows.length > 0) {

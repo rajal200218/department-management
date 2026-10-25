@@ -45,17 +45,73 @@ async function request(endpoint, options = {}) {
 
     return data;
   } catch (error) {
-    console.error(`API Error [${endpoint}]:`, error);
+    if (!options.silentError) {
+      console.error(`API Error [${endpoint}]:`, error);
+    }
     throw error;
   }
 }
 
+// Helper to get alias email candidates (supports both @ljku.edu.in and legacy cloud @nuv.ac.in)
+function getEmailCandidates(inputEmail) {
+  if (!inputEmail) return [inputEmail];
+  const clean = inputEmail.trim();
+  const lower = clean.toLowerCase();
+  const candidates = [];
+
+  const isRenderCloud = BASE_URL.includes('nuv-department-api.onrender.com');
+
+  if (isRenderCloud) {
+    if (lower === 'admin@ljku.edu.in') candidates.push('admin@nuv.ac.in');
+    else if (lower === 'dean.academic@ljku.edu.in') candidates.push('dean.academic@nuv.ac.in');
+    else if (lower === 'amit.patel@ljku.edu.in') candidates.push('rajesh.sharma@nuv.ac.in', 'amit.patel@nuv.ac.in');
+    else if (lower === 'priya.joshi@ljku.edu.in') candidates.push('priya.desai@nuv.ac.in');
+    else if (lower.endsWith('@ljku.edu.in')) candidates.push(lower.replace('@ljku.edu.in', '@nuv.ac.in'));
+    candidates.push(clean);
+  } else {
+    candidates.push(clean);
+    if (lower === 'admin@ljku.edu.in') candidates.push('admin@nuv.ac.in');
+    else if (lower === 'dean.academic@ljku.edu.in') candidates.push('dean.academic@nuv.ac.in');
+    else if (lower === 'amit.patel@ljku.edu.in') candidates.push('rajesh.sharma@nuv.ac.in', 'amit.patel@nuv.ac.in');
+    else if (lower === 'priya.joshi@ljku.edu.in') candidates.push('priya.desai@nuv.ac.in');
+    else if (lower.endsWith('@ljku.edu.in')) candidates.push(lower.replace('@ljku.edu.in', '@nuv.ac.in'));
+    else if (lower.endsWith('@nuv.ac.in')) candidates.push(lower.replace('@nuv.ac.in', '@ljku.edu.in'));
+  }
+
+  return [...new Set(candidates)];
+}
+
+function mapCloudEmail(email) {
+  if (!email) return email;
+  const candidates = getEmailCandidates(email);
+  return candidates[0] || email;
+}
+
 export const api = {
   // Auth
-  login: (email, password) => request('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ email, password })
-  }),
+  login: async (email, password) => {
+    const candidates = getEmailCandidates(email);
+    let lastError = null;
+
+    for (let i = 0; i < candidates.length; i++) {
+      const candidateEmail = candidates[i];
+      const hasFallback = i < candidates.length - 1;
+      try {
+        const response = await request('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email: candidateEmail, password }),
+          silentError: hasFallback
+        });
+        return response;
+      } catch (err) {
+        lastError = err;
+        if (err.message && !err.message.includes('401') && !err.message.toLowerCase().includes('invalid')) {
+          throw err;
+        }
+      }
+    }
+    throw lastError || new Error('Invalid email or password.');
+  },
   getProfile: () => request('/auth/profile'),
   verifySession: () => request('/auth/verify'),
   changePassword: (data) => request('/auth/change-password', {
@@ -64,19 +120,25 @@ export const api = {
   }),
   resetPassword: (data) => request('/auth/reset-password', {
     method: 'POST',
-    body: JSON.stringify(data)
+    body: JSON.stringify({
+      ...data,
+      email: mapCloudEmail(data.email)
+    })
   }),
   forgotPassword: (email) => request('/auth/forgot-password', {
     method: 'POST',
-    body: JSON.stringify({ email })
+    body: JSON.stringify({ email: mapCloudEmail(email) })
   }),
   verifyResetOtp: (email, otpCode) => request('/auth/verify-reset-otp', {
     method: 'POST',
-    body: JSON.stringify({ email, otpCode })
+    body: JSON.stringify({ email: mapCloudEmail(email), otpCode })
   }),
   resetPasswordWithOtp: (data) => request('/auth/reset-password-with-otp', {
     method: 'POST',
-    body: JSON.stringify(data)
+    body: JSON.stringify({
+      ...data,
+      email: mapCloudEmail(data.email)
+    })
   }),
 
   // Dashboard & SQL query logs

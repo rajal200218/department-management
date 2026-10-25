@@ -262,6 +262,24 @@ async function initDatabase() {
           CREATE INDEX IF NOT EXISTS idx_academic_history_student ON student_academic_history(student_id);
           CREATE INDEX IF NOT EXISTS idx_academic_history_semester ON student_academic_history(semester);
         `);
+
+        // Check if secondary module tables are empty, and auto-seed if needed
+        try {
+          const countRes = await client.query('SELECT count(*) FROM subjects');
+          if (parseInt(countRes.rows[0].count, 10) === 0) {
+            console.log('🌱 Cloud database missing subjects/attendance/exam records. Seeding comprehensive dataset...');
+            const { seedDatabase } = require('./seed');
+            await seedDatabase();
+            console.log('✔ Cloud database seeded successfully.');
+          }
+
+          // Ensure student semester aligns with active academic session curriculum (Semester 4)
+          await client.query(`
+            UPDATE students SET current_semester = 4 WHERE current_semester != 4;
+          `);
+        } catch (seedCheckErr) {
+          console.warn('Auto-seed check notice:', seedCheckErr.message);
+        }
       }
     } catch (syncErr) {
       console.warn('Database schema sync notice:', syncErr.message);
