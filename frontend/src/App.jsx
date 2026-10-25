@@ -898,8 +898,11 @@ export default function App() {
 
       <StudentProfileModal
         isOpen={isStudentProfileOpen}
-        onClose={() => setIsStudentProfileOpen(false)}
-        studentId={selectedStudentForProfile?.id}
+        onClose={() => {
+          setIsStudentProfileOpen(false);
+          setSelectedStudentForProfile(null);
+        }}
+        studentId={selectedStudentForProfile?.id || selectedStudentForProfile}
       />
 
       {/* Subject Modal */}

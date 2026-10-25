@@ -894,7 +894,7 @@ export default function Examinations({ user, departments = [] }) {
                   <table className="data-table" style={{ margin: 0 }}>
                     <thead>
                       <tr>
-                        <th>Sem</th>
+                        <th style={{ whiteSpace: 'nowrap', width: '85px' }}>Sem</th>
                         <th>Subject Code</th>
                         <th>Course Title</th>
                         <th>Exam</th>
@@ -915,11 +915,13 @@ export default function Examinations({ user, departments = [] }) {
 
                           return (
                             <tr key={idx}>
-                              <td>
+                              <td style={{ whiteSpace: 'nowrap' }}>
                                 <span style={{
-                                  padding: '0.15rem 0.45rem',
+                                  display: 'inline-block',
+                                  whiteSpace: 'nowrap',
+                                  padding: '0.2rem 0.5rem',
                                   borderRadius: '4px',
-                                  fontSize: '0.7rem',
+                                  fontSize: '0.72rem',
                                   fontWeight: 700,
                                   background: 'rgba(59, 130, 246, 0.15)',
                                   color: '#93C5FD'

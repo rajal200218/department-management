@@ -253,7 +253,7 @@ export default function Students({
                         <div>
                           <div 
                             style={{ fontWeight: 700, color: '#F1F5F9', cursor: 'pointer' }}
-                            onClick={() => onOpenProfileModal(s.id)}
+                            onClick={() => onOpenProfileModal(s)}
                             title="Click to view academic profile"
                           >
                             {s.name}
@@ -320,7 +320,7 @@ export default function Students({
                     <td style={{ textAlign: 'right' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.45rem' }}>
                         <button
-                          onClick={() => onOpenProfileModal(s.id)}
+                          onClick={() => onOpenProfileModal(s)}
                           className="btn-icon"
                           title="View Student Profile & Performance"
                           style={{ color: '#60A5FA' }}

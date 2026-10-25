@@ -4,24 +4,32 @@ import { api } from '../services/api';
 
 export default function StudentProfileModal({ isOpen, onClose, studentId }) {
   const [student, setStudent] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'attendance', 'results'
 
-  useEffect(() => {
-    if (isOpen && studentId) {
-      loadStudentProfile();
-    }
-  }, [isOpen, studentId]);
+  const resolvedId = typeof studentId === 'object' && studentId !== null ? studentId.id : studentId;
 
-  const loadStudentProfile = async () => {
+  useEffect(() => {
+    if (isOpen && resolvedId) {
+      loadStudentProfile(resolvedId);
+    } else if (!isOpen) {
+      setStudent(null);
+      setLoading(false);
+    }
+  }, [isOpen, resolvedId]);
+
+  const loadStudentProfile = async (id) => {
     setLoading(true);
     try {
-      const res = await api.getStudentById(studentId);
+      const res = await api.getStudentById(id);
       if (res.success) {
         setStudent(res.data);
+      } else {
+        setStudent(null);
       }
     } catch (err) {
       console.error('Failed to load student details:', err);
+      setStudent(null);
     } finally {
       setLoading(false);
     }
@@ -121,6 +129,8 @@ export default function StudentProfileModal({ isOpen, onClose, studentId }) {
         <div className="modal-body" style={{ padding: '1.5rem' }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: '#94A3B8' }}>Loading student records...</div>
+          ) : !student ? (
+            <div style={{ textAlign: 'center', padding: '3rem', color: '#94A3B8' }}>No student details found.</div>
           ) : (
             <>
               {/* TAB 1: OVERVIEW */}
@@ -358,7 +368,7 @@ export default function StudentProfileModal({ isOpen, onClose, studentId }) {
                   <table className="data-table" style={{ width: '100%' }}>
                     <thead>
                       <tr>
-                        <th>Sem</th>
+                        <th style={{ whiteSpace: 'nowrap', width: '85px' }}>Sem</th>
                         <th>Subject</th>
                         <th>Exam Title</th>
                         <th>Date</th>
@@ -371,11 +381,13 @@ export default function StudentProfileModal({ isOpen, onClose, studentId }) {
                       {student.exam_results?.length > 0 ? (
                         student.exam_results.map((res) => (
                           <tr key={res.id}>
-                            <td>
+                            <td style={{ whiteSpace: 'nowrap' }}>
                               <span style={{
-                                padding: '0.15rem 0.45rem',
+                                display: 'inline-block',
+                                whiteSpace: 'nowrap',
+                                padding: '0.2rem 0.5rem',
                                 borderRadius: '4px',
-                                fontSize: '0.7rem',
+                                fontSize: '0.72rem',
                                 fontWeight: 700,
                                 background: 'rgba(59, 130, 246, 0.15)',
                                 color: '#93C5FD'
